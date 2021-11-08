@@ -18,36 +18,36 @@ export const countStickersPoints = (stickers) => stickers.reduce((acc, sticker) 
   return acc + points
 }, 0)
 
-export const updateStatus = async (newStatus, frame) => {
+export const updateStatus = async (newStatus) => {
   const statusIcon = document.getElementById("board-status-icon")
   const statusMessage = document.getElementById("board-status-message")
 
   statusIcon.src = boardStatusIcons[newStatus];
   statusMessage.textContent = boardStatusMessages[newStatus];
 
-  if (frame) {
+  if (window.frame) {
     const appId = miro.getClientId();
-    frame.metadata[appId] = { ...frame.metadata[appId], status: newStatus }
+    window.frame.metadata[appId] = { ...window.frame.metadata[appId], status: newStatus }
 
-    await miro.board.widgets.update(frame);
+    await miro.board.widgets.update(window.frame);
   }
 }
 
-export const handleStickersChange = (frame) => async (ev) => {
+export const handleStickersChange = async (ev) => {
   console.debug('ev', ev);
   const itemId = ev.data[0]?.id;
 
-  if (!frame) {
+  if (!window.frame) {
     console.error("No frame widget found, unable to update board status :(")
     return;
   }
 
-  const item = itemId ? (await miro.board.widgets.get({ type: "sticker", id: itemId })).filter((item) => withinAllBounds(item, frame))[0] : undefined;
+  const item = itemId ? (await miro.board.widgets.get({ type: "sticker", id: itemId })).filter((item) => withinAllBounds(item, window.frame))[0] : undefined;
 
   if (!item) {
     console.error("No status widget found, unable to update board status :(")
     return;
   }
 
-  await updateStatus("fail", frame);
+  await updateStatus("fail");
 };

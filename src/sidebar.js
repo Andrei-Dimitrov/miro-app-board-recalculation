@@ -7,8 +7,6 @@ import {
   withinYBounds
 } from "./helpers.js";
 
-let frame;
-
 const createBoardFrameSelectOptions = async () => {
   const select = document.getElementById("frame-select");
   const frames = await miro.board.widgets.get({ type: "frame" });
@@ -19,24 +17,24 @@ const createBoardFrameSelectOptions = async () => {
 
   select.addEventListener("change", async(ev) => {
     const frameId = ev.target.value;
-    frame = (await miro.board.widgets.get({ id: frameId }))[0];
-    console.debug('frame', frame);
+    window.frame = (await miro.board.widgets.get({ id: frameId }))[0];
+    console.debug('frame', window.frame);
 
     const appId = miro.getClientId();
 
-    await updateStatus(frame.metadata[appId]?.status ?? "unknown");
+    await updateStatus(window.frame?.metadata[appId]?.status ?? "unknown");
 
     await miro.broadcastData({ frameId, from: "sidebar" });
   })
 }
 
 const handleRecalculate = async () => {
-  if (!frame) {
+  if (!window.frame) {
     return;
   }
 
   const table = (await miro.board.widgets.get({ type: "grid"}))
-    .filter(item => withinAllBounds(item, frame))[0];
+    .filter(item => withinAllBounds(item, window.frame))[0];
 
   const stickers = (await miro.board.widgets.get({ type: "sticker"}))
     .filter(item => withinAllBounds(item, table));
@@ -74,7 +72,7 @@ const handleRecalculate = async () => {
     await miro.board.widgets.update(shape);
   }))
 
-  await updateStatus("ok", frame);
+  await updateStatus("ok");
 }
 
 miro.onReady(async () => {
@@ -84,15 +82,13 @@ miro.onReady(async () => {
 
   recalculateButton.addEventListener("click", handleRecalculate)
 
-  const handler = handleStickersChange(frame)
-
-  miro.addListener("WIDGETS_CREATED", handler)
-  miro.addListener("WIDGETS_DELETED", handler)
-  miro.addListener("WIDGETS_TRANSFORMATION_UPDATED", handler)
+  miro.addListener("WIDGETS_CREATED", handleStickersChange)
+  miro.addListener("WIDGETS_DELETED", handleStickersChange)
+  miro.addListener("WIDGETS_TRANSFORMATION_UPDATED", handleStickersChange)
   miro.addListener("DATA_BROADCASTED", async (ev) => {
     const frameId = ev.data.frameId;
     if (frameId && ev.data.from === "main") {
-      frame = (await miro.board.widgets.get({ id: frameId }))[0]
+      window.frame = (await miro.board.widgets.get({ id: frameId }))[0]
 
       const select = document.getElementById("frame-select");
 
