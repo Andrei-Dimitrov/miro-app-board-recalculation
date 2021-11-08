@@ -22,6 +22,4 @@ miro.onReady(async () => {
       },
     },
   });
-
-
 });

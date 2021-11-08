@@ -32,3 +32,22 @@ export const updateStatus = async (newStatus, frame) => {
     await miro.board.widgets.update(frame);
   }
 }
+
+export const handleStickersChange = (frame) => async (ev) => {
+  console.debug('ev', ev);
+  const itemId = ev.data[0]?.id;
+
+  if (!frame) {
+    console.error("No frame widget found, unable to update board status :(")
+    return;
+  }
+
+  const item = itemId ? (await miro.board.widgets.get({ type: "sticker", id: itemId })).filter((item) => withinAllBounds(item, frame))[0] : undefined;
+
+  if (!item) {
+    console.error("No status widget found, unable to update board status :(")
+    return;
+  }
+
+  await updateStatus("fail", frame);
+};

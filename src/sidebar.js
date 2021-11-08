@@ -1,4 +1,11 @@
-import { countStickersPoints, updateStatus, withinAllBounds, withinXBounds, withinYBounds } from "./helpers.js";
+import {
+  countStickersPoints,
+  handleStickersChange,
+  updateStatus,
+  withinAllBounds,
+  withinXBounds,
+  withinYBounds
+} from "./helpers.js";
 
 let frame;
 
@@ -76,24 +83,7 @@ miro.onReady(async () => {
 
   recalculateButton.addEventListener("click", handleRecalculate)
 
-  const handler = async (ev) => {
-    console.debug('ev', ev);
-    const itemId = ev.data[0]?.id;
-
-    if (!frame) {
-      console.error("No frame widget found, unable to update board status :(")
-      return;
-    }
-
-    const item = itemId ? (await miro.board.widgets.get({ type: "sticker", id: itemId })).filter((item) => withinAllBounds(item, frame))[0] : undefined;
-
-    if (!item) {
-      console.error("No status widget found, unable to update board status :(")
-      return;
-    }
-
-    await updateStatus("fail", frame);
-  };
+  const handler = handleStickersChange(frame)
 
   miro.addListener("WIDGETS_CREATED", handler)
   miro.addListener("WIDGETS_DELETED", handler)
