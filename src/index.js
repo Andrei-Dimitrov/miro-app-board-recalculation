@@ -34,5 +34,6 @@ miro.onReady(async () => {
       frameId = ev.data.frameId
     }
     console.debug('ev', ev);
+    console.debug('UPDATED FRAME ID IN INDEX', ev.data.frameId);
   })
 });

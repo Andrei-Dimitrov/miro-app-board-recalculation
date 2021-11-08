@@ -98,6 +98,7 @@ miro.onReady(async () => {
       const select = document.getElementById("frame-select");
 
       select.value = ev.data.frameId;
+      console.debug('UPDATED FRAME ID IN SIDEBAR', ev.data.frameId);
     }
     console.debug('ev', ev);
   })
