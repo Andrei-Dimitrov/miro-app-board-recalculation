@@ -1,5 +1,5 @@
-import { countStickersPoints, updateStatus, withinAllBounds, withinXBounds, withinYBounds } from "./helpers";
-import { boardStatuses, libraryIcon, toolbarIcon } from "./constants";
+import { countStickersPoints, updateStatus, withinAllBounds, withinXBounds, withinYBounds } from "./helpers.js";
+import { boardStatuses, libraryIcon, toolbarIcon } from "./constants.js";
 
 let frame;
 

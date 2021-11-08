@@ -1,4 +1,4 @@
-import { boardStatuses, boardStatusStyles } from "./constants";
+import { boardStatuses, boardStatusStyles } from "./constants.js";
 
 export const withinYBounds = (item, parent) => (
   item.bounds.left >= parent.bounds.left
