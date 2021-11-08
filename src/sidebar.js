@@ -92,12 +92,18 @@ miro.onReady(async () => {
   miro.addListener("WIDGETS_DELETED", handler)
   miro.addListener("WIDGETS_TRANSFORMATION_UPDATED", handler)
   miro.addListener("DATA_BROADCASTED", async (ev) => {
-    if (ev.data.frameId && ev.data.from === "main") {
-      frame = (await miro.board.widgets.get({ id: ev.data.frameId }))[0]
+    const frameId = ev.data.frameId;
+    if (frameId && ev.data.from === "main") {
+      frame = (await miro.board.widgets.get({ id: frameId }))[0]
 
       const select = document.getElementById("frame-select");
 
-      select.value = ev.data.frameId;
+      const option = Array.from(select.options).find((option) => option.value === frameId);
+
+      if (option) {
+        option.selected = true;
+        select.dispatchEvent(new Event("change"))
+      }
       console.debug('UPDATED FRAME ID IN SIDEBAR', ev.data.frameId);
     }
   })
