@@ -1,5 +1,4 @@
 import { countStickersPoints, updateStatus, withinAllBounds, withinXBounds, withinYBounds } from "./helpers.js";
-import { boardStatusIcons } from "./constants.js";
 
 let frame;
 
@@ -60,7 +59,7 @@ const handleRecalculate = async () => {
     await miro.board.widgets.update(shape);
   }))
 
-  await updateStatus(boardStatusIcons.ok);
+  await updateStatus("ok");
 }
 
 miro.onReady(async () => {
@@ -85,7 +84,7 @@ miro.onReady(async () => {
       return;
     }
 
-    await updateStatus(boardStatusIcons.fail);
+    await updateStatus("fail");
   };
 
   miro.addListener("WIDGETS_CREATED", handler)

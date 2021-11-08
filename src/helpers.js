@@ -22,8 +22,6 @@ export const updateStatus = async (newStatus) => {
   const statusIcon = document.getElementById("board-status-icon")
   const statusMessage = document.getElementById("board-status-message")
 
-  const prevStatus = newStatus === boardStatuses.ok ? boardStatusIcons.fail : boardStatusIcons.ok;
-
-  statusIcon.src = statusIcon.src.replace(prevStatus, newStatus);
-  statusMessage.textContent = newStatus === boardStatuses.ok ? boardStatusMessages.ok : boardStatusMessages.fail;
+  statusIcon.src = boardStatusIcons[newStatus];
+  statusMessage.textContent = boardStatusMessages[newStatus];
 }
