@@ -13,6 +13,10 @@ const createBoardFrameSelectOptions = async () => {
   select.addEventListener("change", async(ev) => {
     frame = (await miro.board.widgets.get({ id: ev.target.value }))[0];
     console.debug('frame', frame);
+
+    if (frame.metadata.status) {
+      await updateStatus(frame.metadata)
+    }
   })
 }
 
@@ -60,7 +64,7 @@ const handleRecalculate = async () => {
     await miro.board.widgets.update(shape);
   }))
 
-  await updateStatus("ok");
+  await updateStatus("ok", frame);
 }
 
 miro.onReady(async () => {
@@ -86,7 +90,7 @@ miro.onReady(async () => {
       return;
     }
 
-    await updateStatus("fail");
+    await updateStatus("fail", frame);
   };
 
   miro.addListener("WIDGETS_CREATED", handler)

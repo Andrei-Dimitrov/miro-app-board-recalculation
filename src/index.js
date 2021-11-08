@@ -10,16 +10,18 @@ miro.onReady(async () => {
         toolbarSvgIcon: toolbarIcon,
         librarySvgIcon: libraryIcon,
         async onClick() {
-          await miro.board.ui.openLeftSidebar(`${path}/sidebar.html`, { width: 200 })
+          await miro.board.ui.openLeftSidebar(`${path}/sidebar.html`)
         },
       },
       bottomBar: {
         title: 'Recalculate the PIP board',
         svgIcon: toolbarIcon,
         async onClick() {
-         await miro.board.ui.openLeftSidebar(`${path}/sidebar.html`, { width: 200 })
+         await miro.board.ui.openLeftSidebar(`${path}/sidebar.html`)
         },
       },
     },
   });
+
+
 });

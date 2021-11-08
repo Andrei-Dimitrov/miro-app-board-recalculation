@@ -18,10 +18,16 @@ export const countStickersPoints = (stickers) => stickers.reduce((acc, sticker) 
   return acc + points
 }, 0)
 
-export const updateStatus = async (newStatus) => {
+export const updateStatus = async (newStatus, frame) => {
   const statusIcon = document.getElementById("board-status-icon")
   const statusMessage = document.getElementById("board-status-message")
 
   statusIcon.src = boardStatusIcons[newStatus];
   statusMessage.textContent = boardStatusMessages[newStatus];
+
+  if (frame) {
+    frame.metadata.status = newStatus
+
+    await miro.board.widgets.update(frame);
+  }
 }
