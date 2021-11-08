@@ -4,9 +4,11 @@ export const libraryIcon = `<svg width="48" height="48" fill="none" xmlns="http:
 export const boardStatusIcons = {
   ok: "https://www.svgrepo.com/show/13650/success.svg",
   fail: "https://www.svgrepo.com/show/13658/error.svg",
+  unknown: "https://www.svgrepo.com/show/146075/question.svg",
 };
 
 export const boardStatusMessages = {
   ok: "Up to date",
   fail: "Outdated",
+  unknown: "Unknown. Recalculate to update!",
 };

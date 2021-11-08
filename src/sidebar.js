@@ -24,9 +24,7 @@ const createBoardFrameSelectOptions = async () => {
 
     const appId = miro.getClientId();
 
-    if (frame.metadata[appId]?.status) {
-      await updateStatus(frame.metadata[appId].status);
-    }
+    await updateStatus(frame.metadata[appId]?.status ?? "unknown");
 
     await miro.broadcastData({ frameId, from: "sidebar" });
   })
