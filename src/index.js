@@ -4,6 +4,22 @@ const libraryIcon = `<svg width="48" height="48" fill="none" xmlns="http://www.w
 const init = async () => {
   const miro = window.miro;
 
+  const boardStatuses = {
+    ok: "✔️",
+    fail: "❌",
+  };
+
+  const boardStatusStyles = {
+    ok: {
+      backgroundColor: "#8fd14f",
+      borderColor: "transparent",
+    },
+    fail: {
+      backgroundColor: "transparent",
+      borderColor: "#f24726",
+    }
+  }
+
   const withinAllBounds = (item, parent) => (
     item.bounds.left >= parent.bounds.left
     && item.bounds.top >= parent.bounds.top
@@ -28,6 +44,9 @@ const init = async () => {
   }, 0)
 
   const frame = (await miro.board.widgets.get({ type: "frame", title: "Codebots 2.0" }))[0];
+
+  const okStatus = (await miro.board.widgets.get({ type: "shape", plainText: boardStatuses.ok }))[0];
+  const failStatus = (await miro.board.widgets.get({ type: "shape", plainText: boardStatuses.fail }))[0];
 
   const table = (await miro.board.widgets.get({ type: "grid"}))
     .filter(item => withinAllBounds(item, frame))[0];
@@ -67,6 +86,13 @@ const init = async () => {
 
     await miro.board.widgets.update(shape);
   }))
+
+  if (failStatus) {
+    failStatus.style = {...failStatus.style, ...boardStatusStyles.ok };
+    failStatus.plainText = boardStatuses.ok;
+
+    await miro.board.widgets.update(failStatus);
+  }
 }
 
 miro.onReady(() => {
@@ -89,4 +115,8 @@ miro.onReady(() => {
       },
     },
   });
+
+  miro.addListener("WIDGETS_CREATED", (ev) => console.debug(ev))
+  miro.addListener("WIDGETS_DELETED", (ev) => console.debug(ev))
+  miro.addListener("WIDGETS_TRANSFORMATION_UPDATED", (ev) => console.debug(ev))
 });
