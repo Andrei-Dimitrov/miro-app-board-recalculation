@@ -14,8 +14,10 @@ const createBoardFrameSelectOptions = async () => {
     frame = (await miro.board.widgets.get({ id: ev.target.value }))[0];
     console.debug('frame', frame);
 
-    if (frame.metadata.status) {
-      await updateStatus(frame.metadata)
+    const appId = miro.getClientId();
+
+    if (frame.metadata[appId]?.status) {
+      await updateStatus(frame.metadata[appId].status)
     }
   })
 }

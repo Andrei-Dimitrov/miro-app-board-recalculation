@@ -26,7 +26,8 @@ export const updateStatus = async (newStatus, frame) => {
   statusMessage.textContent = boardStatusMessages[newStatus];
 
   if (frame) {
-    frame.metadata.status = newStatus
+    const appId = miro.getClientId();
+    frame.metadata[appId] = { ...frame.metadata[appId], status: newStatus }
 
     await miro.board.widgets.update(frame);
   }
