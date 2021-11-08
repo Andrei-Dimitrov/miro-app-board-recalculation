@@ -11,7 +11,7 @@ const createBoardFrameSelectOptions = async () => {
   })
 
   select.addEventListener("change", async(ev) => {
-    frame = await miro.board.widgets.get({ id: ev.target.value });
+    frame = (await miro.board.widgets.get({ id: ev.target.value }))[0];
     console.debug('frame', frame);
   })
 }
