@@ -2,18 +2,13 @@ export const toolbarIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill
 export const libraryIcon = `<svg width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="m6 12 17.542 5.687M6 12v22l17.542 6M6 12l17.542-6L42 12m-18.458 5.687V40m0-22.313L42 12M23.542 40 42 34V12" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 
-export const boardStatuses = {
-  ok: "\u2714️️", // ✔️
-  fail: "\u274C", // ❌
+export const boardStatusIcons = {
+  ok: "success.svg",
+  fail: "error.svg",
 };
 
-export const boardStatusStyles = {
-  ok: {
-    backgroundColor: "#8fd14f",
-    borderColor: "transparent",
-  },
-  fail: {
-    backgroundColor: "transparent",
-    borderColor: "#f24726",
-  }
-}
+
+export const boardStatusMessages = {
+  ok: "Up to date",
+  fail: "Outdated",
+};

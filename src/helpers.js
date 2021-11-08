@@ -1,4 +1,4 @@
-import { boardStatuses, boardStatusStyles } from "./constants.js";
+import { boardStatusIcons, boardStatusMessages } from "./constants.js";
 
 export const withinYBounds = (item, parent) => (
   item.bounds.left >= parent.bounds.left
@@ -19,23 +19,11 @@ export const countStickersPoints = (stickers) => stickers.reduce((acc, sticker) 
 }, 0)
 
 export const updateStatus = async (newStatus) => {
-  const okStatus = (await miro.board.widgets.get({ type: "shape", plainText: boardStatuses.ok }))[0];
-  const failStatus = (await miro.board.widgets.get({ type: "shape", plainText: boardStatuses.fail }))[0];
+  const statusIcon = document.getElementById("board-status-icon")
+  const statusMessage = document.getElementById("board-status-message")
 
-  console.debug('okStatus, failStatus', okStatus, failStatus);
-  if (newStatus === boardStatuses.ok && !!failStatus) {
-    failStatus.style = {...failStatus.style, ...boardStatusStyles.ok };
-    failStatus.text = failStatus.text.replace(boardStatuses.fail, boardStatuses.ok);
+  const prevStatus = newStatus === boardStatuses.ok ? boardStatusIcons.fail : boardStatusIcons.ok;
 
-    console.debug('Updated status Ok to Fail');
-    await miro.board.widgets.update(failStatus);
-  }
-
-  if (newStatus === boardStatuses.fail && !!okStatus) {
-    okStatus.style = {...okStatus.style, ...boardStatusStyles.fail };
-    okStatus.text = okStatus.text.replace(boardStatuses.ok, boardStatuses.fail);
-
-    console.debug('Updated status Fail to Ok');
-    await miro.board.widgets.update(okStatus);
-  }
+  statusIcon.src = statusIcon.src.replace(prevStatus, newStatus);
+  statusMessage.textContent = newStatus === boardStatuses.ok ? boardStatusMessages.ok : boardStatusMessages.fail;
 }
