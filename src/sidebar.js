@@ -10,8 +10,9 @@ const createBoardFrameSelectOptions = async () => {
     select.options[select.options.length] = new Option(frame.title, frame.id);
   })
 
-  select.addEventListener("select", async(ev) => {
+  select.addEventListener("change", async(ev) => {
     frame = await miro.board.widgets.get({ id: ev.target.value });
+    console.debug('frame', frame);
   })
 }
 
@@ -73,11 +74,12 @@ miro.onReady(async () => {
     console.debug('ev', ev);
     const itemId = ev.data[0]?.id;
 
-    const item = itemId ? (await miro.board.widgets.get({ type: "sticker", id: itemId })).filter((item) => withinAllBounds(item, frame))[0] : undefined;
-
     if (!frame) {
+      console.error("No frame widget found, unable to update board status :(")
       return;
     }
+
+    const item = itemId ? (await miro.board.widgets.get({ type: "sticker", id: itemId })).filter((item) => withinAllBounds(item, frame))[0] : undefined;
 
     if (!item) {
       console.error("No status widget found, unable to update board status :(")
