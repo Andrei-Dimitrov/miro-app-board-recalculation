@@ -128,11 +128,13 @@ miro.onReady(async () => {
   });
 
   const handler = async (ev) => {
+    console.debug('ev', ev);
     const itemId = ev.data[0]?.id;
 
     const item = itemId ? (await miro.board.widgets.get({ type: "sticker", id: itemId })).filter((item) => withinAllBounds(item, frame))[0] : undefined;
 
     if (!item) {
+      console.error("No status widget found, unable to update board status :(")
       return;
     }
 
