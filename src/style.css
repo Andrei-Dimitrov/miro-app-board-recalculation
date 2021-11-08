@@ -1,0 +1,64 @@
+@font-face {
+    font-family: 'Formular';
+    src: url('https://miro.com/app/static/static/fonts/general/FormularRegular/formular-regular.4b9930.woff2');
+}
+
+body,
+button,
+input,
+textarea,
+select {
+    font: 14px OpenSans, Arial, Helvetica, sans-serif;
+    font-style: normal;
+    font-variant-ligatures: normal;
+    font-variant-caps: normal;
+    font-variant-numeric: normal;
+    font-variant-east-asian: normal;
+    font-weight: normal;
+    font-stretch: normal;
+    font-size: 14px;
+    line-height: normal;
+    font-family: OpenSans, Arial, Helvetica, sans-serif;
+}
+
+.sidebar__content {
+    display: flex;
+    flex-grow: 1;
+    position: relative;
+    justify-content: flex-end;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+}
+
+#frame-select {
+    display: block;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.board-status-container {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+}
+
+#board-status-icon {
+    margin-right: 16px;
+    width: 32px;
+    height: 32px;
+}
+
+#recalculate-button {
+    cursor: pointer;
+    margin-top: 16px;
+    border: none;
+    background-color: #25AE88;
+    padding: 12px 16px;
+    color: white;
+    border-radius: 4px;
+}
+
+#recalculate-button:hover {
+    background-color: #3fcea6;
+}

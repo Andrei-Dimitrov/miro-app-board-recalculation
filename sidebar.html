@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Miro App Board Recalculation</title>
+  <link rel="stylesheet" href="src/style.css" />
+</head>
+<body>
+<div class="sidebar__content">
+  <div>
+    <h1 class="header">Miro App Board Recalculation</h1>
+    <div id="container">
+      <label>
+        Board Frame:
+        <select id="frame-select">
+        </select>
+      </label>
+      <div>
+        Board status:
+        <div class="board-status-container">
+          <img src="https://www.svgrepo.com/show/13650/success.svg" alt="Board status" id="board-status-icon" />
+          <span id="board-status-message">
+          Up to date
+        </span>
+        </div>
+<!--        <img src="https://www.svgrepo.com/show/13658/error.svg" class="board-status" />-->
+      </div>
+      <button id="recalculate-button">
+        Recalculate
+      </button>
+    </div>
+  </div>
+</div>
+<script src="https://miro.com/app/static/sdk.1.1.js"></script>
+<script src="src/sidebar.js"></script>
+</body>
+</html>
