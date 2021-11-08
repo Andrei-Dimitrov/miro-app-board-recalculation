@@ -43,8 +43,6 @@ const countStickersPoints = (stickers) => stickers.reduce((acc, sticker) => {
 }, 0)
 
 const init = async () => {
-  frame = (await miro.board.widgets.get({ type: "frame", title: "Codebots 2.0" }))[0];
-
   const table = (await miro.board.widgets.get({ type: "grid"}))
     .filter(item => withinAllBounds(item, frame))[0];
 
@@ -106,8 +104,10 @@ const updateStatus = async (newStatus) => {
   }
 }
 
-miro.onReady(() => {
-  miro.initialize({
+miro.onReady(async () => {
+  frame = (await miro.board.widgets.get({ type: "frame", title: "Codebots 2.0" }))[0];
+
+  await miro.initialize({
     extensionPoints: {
       toolbar: {
         title: 'Recalculate the PIP board',
