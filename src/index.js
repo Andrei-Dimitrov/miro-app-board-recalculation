@@ -1,7 +1,13 @@
 import { libraryIcon, toolbarIcon } from "./constants.js";
 
 miro.onReady(async () => {
+  let frameId;
   const path = window.location.pathname.replace("/index.html", "");
+
+  const init = async () => {
+    await miro.board.ui.openLeftSidebar(`${path}/sidebar.html`);
+    await miro.broadcastData({ frameId });
+  }
 
   await miro.initialize({
     extensionPoints: {
@@ -10,20 +16,23 @@ miro.onReady(async () => {
         toolbarSvgIcon: toolbarIcon,
         librarySvgIcon: libraryIcon,
         async onClick() {
-          await miro.board.ui.openLeftSidebar(`${path}/sidebar.html`)
+          await init();
         },
       },
       bottomBar: {
         title: 'Recalculate the PIP board',
         svgIcon: toolbarIcon,
         async onClick() {
-         await miro.board.ui.openLeftSidebar(`${path}/sidebar.html`)
+          await init();
         },
       },
     },
   });
 
   miro.addListener("DATA_BROADCASTED", (ev) => {
+    if (ev.data.frameId) {
+      frameId = ev.data.frameId
+    }
     console.debug('ev', ev);
   })
 });

@@ -91,4 +91,14 @@ miro.onReady(async () => {
   miro.addListener("WIDGETS_CREATED", handler)
   miro.addListener("WIDGETS_DELETED", handler)
   miro.addListener("WIDGETS_TRANSFORMATION_UPDATED", handler)
+  miro.addListener("DATA_BROADCASTED", async (ev) => {
+    if (ev.data.frameId) {
+      frame = (await miro.board.widgets.get({ id: ev.data.frameId }))[0]
+
+      const select = document.getElementById("frame-select");
+
+      select.value = ev.data.frameId;
+    }
+    console.debug('ev', ev);
+  })
 })
