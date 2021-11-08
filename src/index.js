@@ -89,10 +89,12 @@ const updateStatus = async (newStatus) => {
   const okStatus = (await miro.board.widgets.get({ type: "shape", plainText: boardStatuses.ok }))[0];
   const failStatus = (await miro.board.widgets.get({ type: "shape", plainText: boardStatuses.fail }))[0];
 
+  console.debug('okStatus, failStatus', okStatus, failStatus);
   if (newStatus === boardStatuses.ok && !!failStatus) {
     failStatus.style = {...failStatus.style, ...boardStatusStyles.ok };
     failStatus.text = failStatus.text.replace(boardStatuses.fail, boardStatuses.ok);
 
+    console.debug('Updated status Ok to Fail');
     await miro.board.widgets.update(failStatus);
   }
 
@@ -100,6 +102,7 @@ const updateStatus = async (newStatus) => {
     okStatus.style = {...okStatus.style, ...boardStatusStyles.fail };
     okStatus.text = okStatus.text.replace(boardStatuses.ok, boardStatuses.fail);
 
+    console.debug('Updated status Fail to Ok');
     await miro.board.widgets.update(okStatus);
   }
 }
