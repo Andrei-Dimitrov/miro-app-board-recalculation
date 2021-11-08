@@ -4,7 +4,7 @@ const libraryIcon = `<svg width="48" height="48" fill="none" xmlns="http://www.w
 let frame;
 
 const boardStatuses = {
-  ok: "✔️",
+  ok: "✔️️",
   fail: "❌",
 };
 
