@@ -6,7 +6,8 @@ miro.onReady(async () => {
 
   const init = async () => {
     await miro.board.ui.openLeftSidebar(`${path}/sidebar.html`);
-    await miro.broadcastData({ frameId });
+    // wait for sidebar to open
+    setTimeout(() => miro.broadcastData({ frameId }), 500);
   }
 
   await miro.initialize({
