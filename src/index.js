@@ -22,4 +22,8 @@ miro.onReady(async () => {
       },
     },
   });
+
+  miro.addListener("DATA_BROADCASTED", (ev) => {
+    console.debug('ev', ev);
+  })
 });

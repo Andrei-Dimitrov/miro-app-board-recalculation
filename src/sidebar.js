@@ -18,14 +18,17 @@ const createBoardFrameSelectOptions = async () => {
   })
 
   select.addEventListener("change", async(ev) => {
-    frame = (await miro.board.widgets.get({ id: ev.target.value }))[0];
+    const frameId = ev.target.value;
+    frame = (await miro.board.widgets.get({ id: frameId }))[0];
     console.debug('frame', frame);
 
     const appId = miro.getClientId();
 
     if (frame.metadata[appId]?.status) {
-      await updateStatus(frame.metadata[appId].status)
+      await updateStatus(frame.metadata[appId].status);
     }
+
+    await miro.broadcastData({ frameId });
   })
 }
 
