@@ -28,7 +28,7 @@ const createBoardFrameSelectOptions = async () => {
       await updateStatus(frame.metadata[appId].status);
     }
 
-    await miro.broadcastData({ frameId });
+    await miro.broadcastData({ frameId, from: "sidebar" });
   })
 }
 
@@ -92,7 +92,7 @@ miro.onReady(async () => {
   miro.addListener("WIDGETS_DELETED", handler)
   miro.addListener("WIDGETS_TRANSFORMATION_UPDATED", handler)
   miro.addListener("DATA_BROADCASTED", async (ev) => {
-    if (ev.data.frameId) {
+    if (ev.data.frameId && ev.data.from === "main") {
       frame = (await miro.board.widgets.get({ id: ev.data.frameId }))[0]
 
       const select = document.getElementById("frame-select");
@@ -100,6 +100,5 @@ miro.onReady(async () => {
       select.value = ev.data.frameId;
       console.debug('UPDATED FRAME ID IN SIDEBAR', ev.data.frameId);
     }
-    console.debug('ev', ev);
   })
 })

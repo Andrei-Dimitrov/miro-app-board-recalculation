@@ -7,7 +7,7 @@ miro.onReady(async () => {
   const init = async () => {
     await miro.board.ui.openLeftSidebar(`${path}/sidebar.html`);
     // wait for sidebar to open
-    setTimeout(() => miro.broadcastData({ frameId }), 500);
+    setTimeout(() => miro.broadcastData({ frameId, from: "main" }), 500);
   }
 
   await miro.initialize({
@@ -31,10 +31,10 @@ miro.onReady(async () => {
   });
 
   miro.addListener("DATA_BROADCASTED", (ev) => {
-    if (ev.data.frameId) {
+    if (ev.data.frameId && ev.data.from === "sidebar") {
       frameId = ev.data.frameId
+
+      console.debug('UPDATED FRAME ID IN INDEX', ev.data.frameId);
     }
-    console.debug('ev', ev);
-    console.debug('UPDATED FRAME ID IN INDEX', ev.data.frameId);
   })
 });
