@@ -44,22 +44,29 @@ export const createBoardFrameSelectOptions = async () => {
   })
 }
 
+export const getBoardData = async () => {
+  const stickers = (await miro.board.widgets.get({ type: "sticker"}))
+    .filter(item => withinAllBounds(item, window.frame));
+
+  const iterations = (await miro.board.widgets.get({ type: "shape"}))
+    .filter(item => withinAllBounds(item, window.frame)).filter((shape) => /vel: \d+\s+ld: \d+/i.test(shape.plainText))
+
+  const features = (await miro.board.widgets.get({ type: "shape"}))
+    .filter(item => withinAllBounds(item, window.frame)).filter((shape) => /size: \d+/i.test(shape.plainText))
+
+  return {
+    stickers,
+    iterations,
+    features,
+  }
+}
+
 export const handleRecalculate = async () => {
   if (!window.frame) {
     return;
   }
 
-  const table = (await miro.board.widgets.get({ type: "grid"}))
-    .filter(item => withinAllBounds(item, window.frame))[0];
-
-  const stickers = (await miro.board.widgets.get({ type: "sticker"}))
-    .filter(item => withinAllBounds(item, table));
-
-  const iterations = (await miro.board.widgets.get({ type: "shape"}))
-    .filter(item => withinAllBounds(item, table)).filter((shape) => /vel: \d+\s+ld: \d+/i.test(shape.plainText))
-
-  const features = (await miro.board.widgets.get({ type: "shape"}))
-    .filter(item => withinAllBounds(item, table)).filter((shape) => /size: \d+/i.test(shape.plainText))
+  const { stickers, iterations, features } = await getBoardData();
 
   // count iteration loads
   await Promise.all(iterations.map(async (iteration) => {
@@ -95,17 +102,7 @@ export const handleValidate = async () => {
     return;
   }
 
-  const table = (await miro.board.widgets.get({ type: "grid"}))
-    .filter(item => withinAllBounds(item, window.frame))[0];
-
-  const stickers = (await miro.board.widgets.get({ type: "sticker"}))
-    .filter(item => withinAllBounds(item, table));
-
-  const iterations = (await miro.board.widgets.get({ type: "shape"}))
-    .filter(item => withinAllBounds(item, table)).filter((shape) => /vel: \d+\s+ld: \d+/i.test(shape.plainText))
-
-  const features = (await miro.board.widgets.get({ type: "shape"}))
-    .filter(item => withinAllBounds(item, table)).filter((shape) => /size: \d+/i.test(shape.plainText))
+  const { stickers, iterations, features } = await getBoardData();
 
   // count iteration loads
   const isIterationsValid = iterations.every((iteration) => {
