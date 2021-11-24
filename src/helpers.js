@@ -37,11 +37,8 @@ export const createBoardFrameSelectOptions = async () => {
   select.addEventListener("change", async(ev) => {
     const frameId = ev.target.value;
     window.frame = (await miro.board.widgets.get({ id: frameId }))[0];
-    console.debug('frame', window.frame);
 
-    const appId = miro.getClientId();
-
-    await updateStatus(window.frame?.metadata[appId]?.status ?? "unknown");
+    await updateStatus("unknown");
 
     await miro.broadcastData({ frameId, from: "sidebar" });
   })
