@@ -29,7 +29,7 @@ export const updateStatus = async (newStatus) => {
     const appId = miro.getClientId();
     window.frame.metadata[appId] = { ...window.frame.metadata[appId], status: newStatus }
 
-    await miro.board.widgets.update(window.frame);
+    // await miro.board.widgets.update(window.frame);
   }
 }
 
@@ -125,6 +125,7 @@ export const handleValidate = async () => {
 
     const iterationCount = Number(iteration.text.match(/ld: (?<count>\d+)/i)?.groups.count ?? 0);
 
+    console.debug('count, iterationCount', count, iterationCount);
     return count === iterationCount;
   })
 
@@ -136,6 +137,7 @@ export const handleValidate = async () => {
 
     const featureCount = Number(feature.text.match(/size: (?<count>\d+)/i)?.groups.count ?? 0);
 
+    console.debug('count, featureCount', count, featureCount);
     return count === featureCount;
   })
 
