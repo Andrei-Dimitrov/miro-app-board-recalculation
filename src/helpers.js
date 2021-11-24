@@ -24,13 +24,6 @@ export const updateStatus = async (newStatus) => {
 
   statusIcon.src = boardStatusIcons[newStatus];
   statusMessage.textContent = boardStatusMessages[newStatus];
-
-  if (window.frame) {
-    const appId = miro.getClientId();
-    window.frame.metadata[appId] = { ...window.frame.metadata[appId], status: newStatus }
-
-    // await miro.board.widgets.update(window.frame);
-  }
 }
 
 export const createBoardFrameSelectOptions = async () => {
