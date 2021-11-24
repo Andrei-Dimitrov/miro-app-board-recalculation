@@ -139,6 +139,8 @@ export const handleValidate = async () => {
     return count === featureCount;
   })
 
+  console.debug('isIterationsValid, isFeaturesValid', isIterationsValid, isFeaturesValid);
+
   if (isIterationsValid && isFeaturesValid) {
     await updateStatus("ok");
   } else {
