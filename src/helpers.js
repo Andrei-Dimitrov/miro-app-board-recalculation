@@ -65,29 +65,29 @@ export const handleRecalculate = async () => {
     .filter(item => withinAllBounds(item, table)).filter((shape) => /size: \d+/i.test(shape.plainText))
 
   // count iteration loads
-  await Promise.all(iterations.map(async (shape) => {
-    const stickersWithin = stickers.filter((item) => item !== shape && withinYBounds(item, shape));
+  await Promise.all(iterations.map(async (iteration) => {
+    const stickersWithin = stickers.filter((item) => item !== iteration && withinYBounds(item, iteration));
 
     const count = countStickersPoints(stickersWithin);
 
-    shape.text = shape.text.replace(/(ld: \d+)/i, `LD: ${count}`);
+    iteration.text = iteration.text.replace(/(ld: \d+)/i, `LD: ${count}`);
 
-    console.debug(shape.text);
+    console.debug(iteration.text);
 
-    await miro.board.widgets.update(shape);
+    await miro.board.widgets.update(iteration);
   }))
 
   // count feature sizes
-  await Promise.all(features.map(async (shape) => {
-    const stickersWithin = stickers.filter((item) => item !== shape && withinXBounds(item, shape));
+  await Promise.all(features.map(async (feature) => {
+    const stickersWithin = stickers.filter((item) => item !== feature && withinXBounds(item, feature));
 
     const count = countStickersPoints(stickersWithin);
 
-    shape.text = shape.text.replace(/(size: \d+)/i, `Size: ${count}`);
+    feature.text = feature.text.replace(/(size: \d+)/i, `Size: ${count}`);
 
-    console.debug(shape.text);
+    console.debug(feature.text);
 
-    await miro.board.widgets.update(shape);
+    await miro.board.widgets.update(feature);
   }))
 
   await updateStatus("ok");
@@ -118,7 +118,6 @@ export const handleValidate = async () => {
 
     const iterationCount = Number(iteration.text.match(/ld: (?<count>\d+)/i)?.groups.count ?? 0);
 
-    console.debug('count, iterationCount', count, iterationCount);
     return count === iterationCount;
   })
 
@@ -130,11 +129,8 @@ export const handleValidate = async () => {
 
     const featureCount = Number(feature.text.match(/size: (?<count>\d+)/i)?.groups.count ?? 0);
 
-    console.debug('count, featureCount', count, featureCount);
     return count === featureCount;
   })
-
-  console.debug('isIterationsValid, isFeaturesValid', isIterationsValid, isFeaturesValid);
 
   if (isIterationsValid && isFeaturesValid) {
     await updateStatus("ok");
