@@ -118,7 +118,7 @@ export const handleValidate = async () => {
     .filter(item => withinAllBounds(item, table)).filter((shape) => /size: \d+/i.test(shape.plainText))
 
   // count iteration loads
-  const isIterationsValid = iterations.every(async (iteration) => {
+  const isIterationsValid = iterations.every((iteration) => {
     const stickersWithin = stickers.filter((item) => item !== iteration && withinYBounds(item, iteration));
 
     const count = countStickersPoints(stickersWithin);
@@ -130,7 +130,7 @@ export const handleValidate = async () => {
   })
 
   // count feature sizes
-  const isFeaturesValid = features.every(async (feature) => {
+  const isFeaturesValid = features.every((feature) => {
     const stickersWithin = stickers.filter((item) => item !== feature && withinXBounds(item, feature));
 
     const count = countStickersPoints(stickersWithin);
