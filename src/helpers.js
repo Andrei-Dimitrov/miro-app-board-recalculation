@@ -11,6 +11,15 @@ export const withinXBounds = (item, parent) =>
 export const withinAllBounds = (item, parent) =>
   withinYBounds(item, parent) && withinXBounds(item, parent);
 
+export const parseQuery = (query) =>
+  query
+    .slice(1)
+    .split("&")
+    .reduce((acc, param) => {
+      const [key, value] = param.split("=");
+      return { ...acc, [key]: decodeURIComponent(value) };
+    }, {});
+
 export const countStickersPoints = (stickers) =>
   stickers.reduce((acc, sticker) => {
     const points = Number(

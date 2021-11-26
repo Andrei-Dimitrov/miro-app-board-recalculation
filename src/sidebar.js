@@ -2,12 +2,13 @@ import {
   handleRecalculate,
   createBoardFrameSelectOptions,
   handleValidate,
+  parseQuery,
 } from "./helpers.js";
 
 miro.onReady(async () => {
   await createBoardFrameSelectOptions();
 
-  console.debug("window.location", window.location);
+  console.debug("window.location", parseQuery(window.location.search));
 
   const recalculateButton = document.getElementById("recalculate-button");
 
