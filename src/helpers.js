@@ -16,26 +16,26 @@ export const isRoughlyWithinColumn = (item, parent) => {
     return true;
   }
 
-  const itemCenter = item.width / 2;
+  const itemCenter = item.bounds.width / 2;
 
   // case when the item is almost inside the parent from the left side: [ |    ] |
   // where: [ ] - item, | | - parent
   if (
-    parent.left > item.left &&
-    parent.left < item.right &&
-    parent.right > item.right
+    item.bounds.left <= parent.bounds.left &&
+    item.bounds.right >= parent.bounds.left &&
+    item.bounds.right <= parent.bounds.right
   ) {
-    return item.right - parent.left >= itemCenter;
+    return item.bounds.right - parent.bounds.left >= itemCenter;
   }
 
   // case when the item is almost inside the parent from the right side: | [    | ]
   // where: [ ] - item, | | - parent
   if (
-    parent.left > item.left &&
-    parent.left < item.right &&
-    parent.right > item.right
+    item.bounds.left >= parent.bounds.left &&
+    item.bounds.left <= parent.bounds.right &&
+    item.bounds.right >= parent.bounds.right
   ) {
-    return parent.right - item.left >= itemCenter;
+    return parent.bounds.right - item.bounds.left >= itemCenter;
   }
 };
 
