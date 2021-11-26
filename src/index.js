@@ -12,9 +12,10 @@ miro.onReady(async () => {
       await miro.requestAuthorization();
     }
 
-    await miro.board.ui.openLeftSidebar(
-      `${path}/sidebar.html?frameId=${frameId}`,
-    );
+    // let the sidebar now what frame was previously selected
+    const queryParams = frameId ? `?frameId=${frameId}` : "";
+
+    await miro.board.ui.openLeftSidebar(`${path}/sidebar.html${queryParams}`);
   };
 
   await miro.initialize({

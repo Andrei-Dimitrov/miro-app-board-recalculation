@@ -48,6 +48,11 @@ export const createBoardFrameSelectOptions = async () => {
   select.addEventListener("change", async (ev) => {
     const frameId = ev.target.value;
     window.frame = (await miro.board.widgets.get({ id: frameId }))[0];
+    const recalculateButton = document.getElementById("recalculate-button");
+
+    if (recalculateButton.disabled === "true") {
+      recalculateButton.disabled = "false";
+    }
 
     await updateStatus("unknown");
 
