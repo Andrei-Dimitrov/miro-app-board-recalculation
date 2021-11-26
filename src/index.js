@@ -5,22 +5,22 @@ miro.onReady(async () => {
   const path = window.location.pathname.replace("/index.html", "");
 
   const init = async () => {
-    const isAuthorized = await miro.isAuthorized()
+    const isAuthorized = await miro.isAuthorized();
 
     if (!isAuthorized) {
       // Ask the user to authorize the app.
-      await miro.requestAuthorization()
+      await miro.requestAuthorization();
     }
 
-    await miro.board.ui.openLeftSidebar(`${path}/sidebar.html`);
-    // wait for sidebar to open
-    setTimeout(() => miro.broadcastData({ frameId, from: "main" }), 2000);
-  }
+    await miro.board.ui.openLeftSidebar(
+      `${path}/sidebar.html?frameId=${frameId}`,
+    );
+  };
 
   await miro.initialize({
     extensionPoints: {
       toolbar: {
-        title: 'Recalculate the PIP board',
+        title: "Recalculate the PIP board",
         toolbarSvgIcon: toolbarIcon,
         librarySvgIcon: libraryIcon,
         async onClick() {
@@ -28,7 +28,7 @@ miro.onReady(async () => {
         },
       },
       bottomBar: {
-        title: 'Recalculate the PIP board',
+        title: "Recalculate the PIP board",
         svgIcon: toolbarIcon,
         async onClick() {
           await init();
@@ -39,9 +39,7 @@ miro.onReady(async () => {
 
   miro.addListener("DATA_BROADCASTED", (ev) => {
     if (ev.data.frameId && ev.data.from === "sidebar") {
-      frameId = ev.data.frameId
-
-      console.debug('UPDATED FRAME ID IN INDEX', ev.data.frameId);
+      frameId = ev.data.frameId;
     }
-  })
+  });
 });
