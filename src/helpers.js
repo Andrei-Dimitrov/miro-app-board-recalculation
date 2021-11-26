@@ -4,12 +4,12 @@ export const isWithinColumn = (item, parent) =>
   item.bounds.left >= parent.bounds.left &&
   item.bounds.right <= parent.bounds.right;
 
-export const isWithingRow = (item, parent) =>
+export const isWithinRow = (item, parent) =>
   item.bounds.top >= parent.bounds.top &&
   item.bounds.bottom <= parent.bounds.bottom;
 
-export const isWithingCell = (item, parent) =>
-  isWithinColumn(item, parent) && isWithingRow(item, parent);
+export const isWithinCell = (item, parent) =>
+  isWithinColumn(item, parent) && isWithinRow(item, parent);
 
 export const isRoughlyWithinColumn = (item, parent) => {
   if (isWithinColumn(item, parent)) {
@@ -37,6 +37,36 @@ export const isRoughlyWithinColumn = (item, parent) => {
   ) {
     return parent.bounds.right - item.bounds.left >= itemCenter;
   }
+
+  return false;
+};
+
+export const isRoughlyWithinRow = (item, parent) => {
+  if (isWithinRow(item, parent)) {
+    return true;
+  }
+
+  const itemCenter = item.bounds.height / 2;
+
+  // case when the item is almost inside the parent from the top side
+  if (
+    item.bounds.top <= parent.bounds.top &&
+    item.bounds.bottom >= parent.bounds.top &&
+    item.bounds.bottom <= parent.bounds.bottom
+  ) {
+    return item.bounds.bottom - parent.bounds.top >= itemCenter;
+  }
+
+  // case when the item is almost inside the parent from the bottom side
+  if (
+    item.bounds.bottom >= parent.bounds.bottom &&
+    item.bounds.top <= parent.bounds.bottom &&
+    item.bounds.top >= parent.bounds.top
+  ) {
+    return parent.bounds.bottom - item.bounds.top >= itemCenter;
+  }
+
+  return false;
 };
 
 export const parseQuery = (query) =>
@@ -90,15 +120,15 @@ export const createBoardFrameSelectOptions = async () => {
 
 export const getBoardData = async () => {
   const stickers = (await miro.board.widgets.get({ type: "sticker" })).filter(
-    (item) => isWithingCell(item, window.frame),
+    (item) => isWithinCell(item, window.frame),
   );
 
   const iterations = (await miro.board.widgets.get({ type: "shape" }))
-    .filter((item) => isWithingCell(item, window.frame))
+    .filter((item) => isWithinCell(item, window.frame))
     .filter((shape) => /vel: \d+\s+ld: \d+/i.test(shape.plainText));
 
   const features = (await miro.board.widgets.get({ type: "shape" }))
-    .filter((item) => isWithingCell(item, window.frame))
+    .filter((item) => isWithinCell(item, window.frame))
     .filter((shape) => /size: \d+/i.test(shape.plainText));
 
   return {
@@ -153,7 +183,7 @@ export const handleRecalculate = async () => {
   await Promise.all(
     features.map(async (feature) => {
       const stickersWithin = stickers.filter(
-        (item) => item !== feature && isWithingRow(item, feature),
+        (item) => item !== feature && isRoughlyWithinRow(item, feature),
       );
 
       const count = countStickersPoints(stickersWithin);
@@ -192,7 +222,7 @@ export const handleValidate = async () => {
   // count feature sizes
   const isFeaturesValid = features.every((feature) => {
     const stickersWithin = stickers.filter(
-      (item) => item !== feature && isWithingRow(item, feature),
+      (item) => item !== feature && isRoughlyWithinRow(item, feature),
     );
 
     const count = countStickersPoints(stickersWithin);
