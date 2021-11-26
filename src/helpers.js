@@ -122,6 +122,14 @@ export const handleRecalculate = async () => {
         (item) => item !== iteration && isRoughlyWithinColumn(item, iteration),
       );
 
+      stickersWithin.forEach((sticker) => {
+        console.debug(
+          "Sticker:",
+          sticker.plainText,
+          " is within iteration ",
+          iteration.plainText,
+        );
+      });
       const load = countStickersPoints(stickersWithin);
 
       const velocity = Number(
