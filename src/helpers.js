@@ -168,7 +168,7 @@ export const handleValidate = async () => {
   // count iteration loads
   const isIterationsValid = iterations.every((iteration) => {
     const stickersWithin = stickers.filter(
-      (item) => item !== iteration && isWithinColumn(item, iteration),
+      (item) => item !== iteration && isRoughlyWithinColumn(item, iteration),
     );
 
     const count = countStickersPoints(stickersWithin);
