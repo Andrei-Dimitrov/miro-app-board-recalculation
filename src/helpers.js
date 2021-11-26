@@ -13,7 +13,7 @@ export const withinXBounds = (item, parent) => (
 export const withinAllBounds = (item, parent) => withinYBounds(item ,parent) && withinXBounds(item, parent);
 
 export const countStickersPoints = (stickers) => stickers.reduce((acc, sticker) => {
-  const points = Number(sticker.plainText.match(/\d+pt/)?.[0]?.slice(0, -2) ?? 0);
+  const points = Number(sticker.plainText.match(/(?<points>\d+)pt/)?.groups.points ?? 0);
 
   return acc + points
 }, 0)
@@ -72,11 +72,17 @@ export const handleRecalculate = async () => {
   await Promise.all(iterations.map(async (iteration) => {
     const stickersWithin = stickers.filter((item) => item !== iteration && withinYBounds(item, iteration));
 
-    const count = countStickersPoints(stickersWithin);
+    const load = countStickersPoints(stickersWithin);
 
-    iteration.text = iteration.text.replace(/(ld: \d+)/i, `LD: ${count}`);
+    const velocity = Number(iteration.text.match(/vel: (?<vel>\d+)/i)?.groups.vel ?? 0);
 
-    console.debug(iteration.text);
+    iteration.text = iteration.text.replace(/(ld: \d+)/i, `LD: ${load}`);
+
+    if (load > velocity) {
+      iteration.style.textColor = "#f00";
+    } else {
+      iteration.style.textColor = "#fff";
+    }
 
     await miro.board.widgets.update(iteration);
   }))
@@ -88,8 +94,6 @@ export const handleRecalculate = async () => {
     const count = countStickersPoints(stickersWithin);
 
     feature.text = feature.text.replace(/(size: \d+)/i, `Size: ${count}`);
-
-    console.debug(feature.text);
 
     await miro.board.widgets.update(feature);
   }))
