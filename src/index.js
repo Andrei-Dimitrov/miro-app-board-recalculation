@@ -5,6 +5,13 @@ miro.onReady(async () => {
   const path = window.location.pathname.replace("/index.html", "");
 
   const init = async () => {
+    const isAuthorized = await miro.isAuthorized()
+
+    if (!isAuthorized) {
+      // Ask the user to authorize the app.
+      await miro.requestAuthorization()
+    }
+
     await miro.board.ui.openLeftSidebar(`${path}/sidebar.html`);
     // wait for sidebar to open
     setTimeout(() => miro.broadcastData({ frameId, from: "main" }), 2000);
