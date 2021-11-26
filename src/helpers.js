@@ -118,6 +118,7 @@ export const handleRecalculate = async () => {
   // count iteration loads
   await Promise.all(
     iterations.map(async (iteration) => {
+      console.debug("stickers", stickers);
       const stickersWithin = stickers.filter(
         (item) => item !== iteration && isRoughlyWithinColumn(item, iteration),
       );
