@@ -69,3 +69,8 @@ select {
 #recalculate-button:hover {
     background-color: #3fcea6;
 }
+
+#recalculate-button[disabled] {
+    background-color: #bebebe;
+    cursor: not-allowed;
+}
