@@ -142,7 +142,7 @@ export const createBoardStats = async () => {
     const diff = document.createElement("td");
     diff.textContent = iterationDiff.toString();
 
-    if (load > velocity) {
+    if (iterationLoad > iterationVelocity) {
       row.style.color = "#f00";
     }
 
@@ -246,6 +246,7 @@ export const handleRecalculate = async () => {
   );
 
   await updateStatus("ok");
+  await createBoardStats();
 };
 
 export const handleValidate = async () => {
@@ -290,6 +291,4 @@ export const handleValidate = async () => {
   } else {
     await updateStatus("fail");
   }
-
-  await createBoardStats();
 };
