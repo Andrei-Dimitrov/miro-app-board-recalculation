@@ -100,6 +100,10 @@ export const createBoardStats = async () => {
 
   const boardStats = document.getElementById("board-stats");
 
+  if (!window.frame) {
+    return;
+  }
+
   if (boardStats.classList.contains("hidden")) {
     boardStats.classList.remove("hidden");
   }
@@ -145,8 +149,6 @@ export const createBoardFrameSelectOptions = async () => {
     if (recalculateButton.disabled) {
       recalculateButton.disabled = false;
     }
-
-    await createBoardStats();
 
     await updateStatus("unknown");
 
@@ -275,4 +277,6 @@ export const handleValidate = async () => {
   } else {
     await updateStatus("fail");
   }
+
+  await createBoardStats();
 };
