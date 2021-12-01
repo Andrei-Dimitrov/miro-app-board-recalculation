@@ -147,9 +147,11 @@ export const createBoardStats = async () => {
     }
 
     row.appendChild(name);
-    name.appendChild(velocity);
-    name.appendChild(load);
-    name.appendChild(diff);
+    row.appendChild(velocity);
+    row.appendChild(load);
+    row.appendChild(diff);
+
+    iterationTable.appendChild(row);
   });
 };
 
