@@ -75,30 +75,6 @@ select {
     cursor: not-allowed;
 }
 
-#iteration-list {
-    display: flex;
-    flex-flow: row;
-    flex-wrap: wrap;
-    width: 300px;      /* set the container width*/
-    overflow: visible;
-}
-
-#iteration-list dt {
-    display: flex;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    width: 30%;
-}
-
-#iteration-list dd {
-    display: flex;
-    margin-left: auto;
-    text-align: left;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    width: 70%;
-}
-
 .hidden {
     display: none;
 }

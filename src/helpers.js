@@ -108,28 +108,48 @@ export const createBoardStats = async () => {
     boardStats.classList.remove("hidden");
   }
 
-  const iterationList = document.getElementById("iteration-list");
+  const iterationTable = document.getElementById("iteration-table");
 
-  iterationList.innerHTML = "";
+  iterationTable.innerHTML = "";
 
   iterations.forEach((iteration) => {
     const iterationName =
       iteration.text.match(/(?<name>I\d\.\d)/i)?.groups.name;
-    const iterationCount =
-      iteration.text.match(/ld: (?<count>\d+)/i)?.groups.count ?? "0";
 
     if (!iterationName) {
       return;
     }
 
-    const term = document.createElement("dt");
-    term.textContent = iterationName;
+    const iterationVelocity = Number(
+      iteration.text.match(/vel: (?<count>\d+)/i)?.groups.count ?? 0,
+    );
+    const iterationLoad = Number(
+      iteration.text.match(/ld: (?<count>\d+)/i)?.groups.count ?? 0,
+    );
+    const iterationDiff = Math.abs(iterationVelocity - iterationLoad);
 
-    const data = document.createElement("dd");
-    data.textContent = iterationCount;
+    const row = document.createElement("tr");
 
-    iterationList.appendChild(term);
-    iterationList.appendChild(data);
+    const name = document.createElement("td");
+    name.textContent = iterationName;
+
+    const velocity = document.createElement("td");
+    velocity.textContent = iterationVelocity.toString();
+
+    const load = document.createElement("td");
+    load.textContent = iterationLoad.toString();
+
+    const diff = document.createElement("td");
+    diff.textContent = iterationDiff.toString();
+
+    if (load > velocity) {
+      row.style.color = "#f00";
+    }
+
+    row.appendChild(name);
+    name.appendChild(velocity);
+    name.appendChild(load);
+    name.appendChild(diff);
   });
 };
 
