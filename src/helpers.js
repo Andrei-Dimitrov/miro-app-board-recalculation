@@ -118,7 +118,6 @@ export const createBoardStats = async () => {
     const iterationCount =
       iteration.text.match(/ld: (?<count>\d+)/i)?.groups.count ?? "0";
 
-    console.debug("iteration.plainText", iteration.plainText);
     if (!iterationName) {
       return;
     }
@@ -187,19 +186,10 @@ export const handleRecalculate = async () => {
   // count iteration loads
   await Promise.all(
     iterations.map(async (iteration) => {
-      console.debug("stickers", stickers);
       const stickersWithin = stickers.filter(
         (item) => item !== iteration && isRoughlyWithinColumn(item, iteration),
       );
 
-      stickersWithin.forEach((sticker) => {
-        console.debug(
-          "Sticker:",
-          sticker.plainText,
-          " is within iteration ",
-          iteration.plainText,
-        );
-      });
       const load = countStickersPoints(stickersWithin);
 
       const velocity = Number(
