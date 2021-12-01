@@ -78,3 +78,7 @@ select {
 .hidden {
     display: none;
 }
+
+td {
+    padding: 0.5rem;
+}
