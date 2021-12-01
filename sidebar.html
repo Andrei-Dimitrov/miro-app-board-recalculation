@@ -16,7 +16,7 @@
         </select>
       </label>
       <div>
-        Board status:
+        <strong>Board status:</strong>
         <div class="board-status-container">
           <img src="https://www.svgrepo.com/show/146075/question.svg" alt="Board status" id="board-status-icon" />
           <span id="board-status-message">
@@ -27,6 +27,24 @@
       <button disabled id="recalculate-button">
         Recalculate
       </button>
+      <div class="hidden" id="board-stats">
+        <h3>
+          Board stats
+        </h3>
+        <strong>
+          Iterations:
+        </strong>
+        <dl id="iteration-list">
+          <dt>
+            I1.1
+          </dt>
+          <dd>5</dd>
+          <dt>
+            I1.2
+          </dt>
+          <dd>3</dd>
+        </dl>
+      </div>
     </div>
   </div>
 </div>

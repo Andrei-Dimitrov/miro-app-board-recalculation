@@ -95,6 +95,40 @@ export const updateStatus = async (newStatus) => {
   statusMessage.textContent = boardStatusMessages[newStatus];
 };
 
+export const createBoardStats = async () => {
+  const { iterations } = await getBoardData();
+
+  const boardStats = document.getElementById("board-stats");
+
+  if (boardStats.classList.contains("hidden")) {
+    boardStats.classList.remove("hidden");
+  }
+
+  const iterationList = document.getElementById("iteration-list");
+
+  iterationList.innerHTML = "";
+
+  iterations.forEach((iteration) => {
+    const iterationName =
+      iteration.text.match(/(?<name>I\d\.\d)/i)?.groups.name;
+    const iterationCount =
+      iteration.text.match(/ld: (?<count>\d+)/i)?.groups.count ?? "0";
+
+    if (!iterationName) {
+      return;
+    }
+
+    const term = document.createElement("dt");
+    term.textContent = iterationName;
+
+    const data = document.createElement("dd");
+    data.textContent = iterationCount;
+
+    iterationList.appendChild(term);
+    iterationList.appendChild(data);
+  });
+};
+
 export const createBoardFrameSelectOptions = async () => {
   const select = document.getElementById("frame-select");
   const frames = await miro.board.widgets.get({ type: "frame" });
@@ -111,6 +145,8 @@ export const createBoardFrameSelectOptions = async () => {
     if (recalculateButton.disabled) {
       recalculateButton.disabled = false;
     }
+
+    await createBoardStats();
 
     await updateStatus("unknown");
 
