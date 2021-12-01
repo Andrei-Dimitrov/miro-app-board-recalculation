@@ -118,6 +118,7 @@ export const createBoardStats = async () => {
     const iterationCount =
       iteration.text.match(/ld: (?<count>\d+)/i)?.groups.count ?? "0";
 
+    console.debug("iteration.plainText", iteration.plainText);
     if (!iterationName) {
       return;
     }
