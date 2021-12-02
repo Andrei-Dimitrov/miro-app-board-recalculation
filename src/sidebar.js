@@ -3,6 +3,7 @@ import {
   createBoardFrameSelectOptions,
   handleValidate,
   parseQuery,
+  createAndDownloadCSV,
 } from "./helpers.js";
 
 miro.onReady(async () => {
@@ -13,6 +14,10 @@ miro.onReady(async () => {
   const recalculateButton = document.getElementById("recalculate-button");
 
   recalculateButton.addEventListener("click", handleRecalculate);
+
+  const exportButton = document.getElementById("export-button");
+
+  exportButton.addEventListener("click", createAndDownloadCSV);
 
   setInterval(handleValidate, 1000);
 

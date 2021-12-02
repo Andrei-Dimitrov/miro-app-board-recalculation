@@ -150,9 +150,13 @@ export const createBoardFrameSelectOptions = async () => {
     const frameId = ev.target.value;
     window.frame = (await miro.board.widgets.get({ id: frameId }))[0];
     const recalculateButton = document.getElementById("recalculate-button");
+    const exportButton = document.getElementById("export-button");
 
     if (recalculateButton.disabled) {
       recalculateButton.disabled = false;
+    }
+    if (exportButton.disabled) {
+      exportButton.disabled = false;
     }
 
     await updateStatus("unknown");
@@ -292,4 +296,66 @@ export const handleValidate = async () => {
   }
 
   await createBoardStats(iterationStats);
+};
+
+export const createAndDownloadCSV = async () => {
+  if (!window.frame) {
+    return;
+  }
+
+  const headers = ["DisplayColor", "Name", "UnifiedParent", "PlanEstimate"];
+
+  const { stickers, iterations, features } = await getBoardData();
+
+  const rows = features.reduce((acc, feature) => {
+    const featureStickers = stickers.filter(
+      (item) => item !== feature && isRoughlyWithinRow(item, feature),
+    );
+
+    featureStickers.forEach((sticker) => {
+      iterations.forEach((iteration) => {
+        const isStickerInIteration = isRoughlyWithinColumn(sticker, iteration);
+
+        if (!isStickerInIteration) {
+          return acc;
+        }
+
+        const iterationName =
+          iteration.plainText.match(/(?<name>I\d\.\d)/i)?.groups.name ?? "";
+        const stickerText = sticker.plainText ?? "Unknown text";
+
+        const displayColor = feature.style?.backgroundColor ?? "#808080";
+
+        const name = `${iterationName} ${stickerText.replace(
+          /(\d+pt)/,
+          "",
+        )}`.trim();
+
+        const unifiedParent =
+          feature.plainText.match(/(?<feat>F\d+)/i)?.groups.feat ?? "";
+
+        const planEstimate =
+          sticker.plainText.match(/(?<points>\d+)pt/)?.groups.points ?? "";
+
+        const row = [displayColor, name, unifiedParent, planEstimate];
+
+        return [...acc, row];
+      });
+    });
+  }, []);
+
+  const csvData = `data:text/csv;charset=utf-8,${[headers, ...rows]
+    .map((row) => row.join(","))
+    .join("\n")}`;
+
+  const encodedUri = encodeURI(csvData);
+
+  const linkElement = document.createElement("a");
+  linkElement.setAttribute("href", encodedUri);
+  linkElement.setAttribute(
+    "download",
+    `${window.frame.title ?? "Board data"}.csv`,
+  );
+
+  linkElement.click();
 };
