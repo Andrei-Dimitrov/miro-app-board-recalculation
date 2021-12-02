@@ -312,34 +312,33 @@ export const createAndDownloadCSV = async () => {
       (item) => item !== feature && isRoughlyWithinRow(item, feature),
     );
 
+    console.debug('featureStickers', featureStickers);
     featureStickers.forEach((sticker) => {
       iterations.forEach((iteration) => {
         const isStickerInIteration = isRoughlyWithinColumn(sticker, iteration);
 
-        if (!isStickerInIteration) {
-          return acc;
+        if (isStickerInIteration) {
+          const iterationName =
+            iteration.plainText.match(/(?<name>I\d\.\d)/i)?.groups.name ?? "";
+          const stickerText = sticker.plainText ?? "Unknown text";
+
+          const displayColor = feature.style?.backgroundColor ?? "#808080";
+
+          const name = `${iterationName} ${stickerText.replace(
+            /(\d+pt)/,
+            "",
+          )}`.trim();
+
+          const unifiedParent =
+            feature.plainText.match(/(?<feat>F\d+)/i)?.groups.feat ?? "";
+
+          const planEstimate =
+            sticker.plainText.match(/(?<points>\d+)pt/)?.groups.points ?? "";
+
+          const row = [displayColor, name, unifiedParent, planEstimate];
+
+          acc.push(row);
         }
-
-        const iterationName =
-          iteration.plainText.match(/(?<name>I\d\.\d)/i)?.groups.name ?? "";
-        const stickerText = sticker.plainText ?? "Unknown text";
-
-        const displayColor = feature.style?.backgroundColor ?? "#808080";
-
-        const name = `${iterationName} ${stickerText.replace(
-          /(\d+pt)/,
-          "",
-        )}`.trim();
-
-        const unifiedParent =
-          feature.plainText.match(/(?<feat>F\d+)/i)?.groups.feat ?? "";
-
-        const planEstimate =
-          sticker.plainText.match(/(?<points>\d+)pt/)?.groups.points ?? "";
-
-        const row = [displayColor, name, unifiedParent, planEstimate];
-
-        return [...acc, row];
       });
     });
 
