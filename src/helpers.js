@@ -307,43 +307,45 @@ export const createAndDownloadCSV = async () => {
 
   const { stickers, iterations, features } = await getBoardData();
 
-  const rows = features.reduce((acc, feature) => {
+  const rows = [];
+
+  // really complicated nested loop, sorry :(
+  for (const feature of features) {
     const featureStickers = stickers.filter(
       (item) => item !== feature && isRoughlyWithinRow(item, feature),
     );
 
-    console.debug('featureStickers', featureStickers);
-    featureStickers.forEach((sticker) => {
-      iterations.forEach((iteration) => {
+    for (const sticker of featureStickers) {
+      for (const iteration of iterations) {
         const isStickerInIteration = isRoughlyWithinColumn(sticker, iteration);
 
-        if (isStickerInIteration) {
-          const iterationName =
-            iteration.plainText.match(/(?<name>I\d\.\d)/i)?.groups.name ?? "";
-          const stickerText = sticker.plainText ?? "Unknown text";
-
-          const displayColor = feature.style?.backgroundColor ?? "#808080";
-
-          const name = `${iterationName} ${stickerText.replace(
-            /(\d+pt)/,
-            "",
-          )}`.trim();
-
-          const unifiedParent =
-            feature.plainText.match(/(?<feat>F\d+)/i)?.groups.feat ?? "";
-
-          const planEstimate =
-            sticker.plainText.match(/(?<points>\d+)pt/)?.groups.points ?? "";
-
-          const row = [displayColor, name, unifiedParent, planEstimate];
-
-          acc.push(row);
+        if (!isStickerInIteration) {
+          continue;
         }
-      });
-    });
 
-    return acc;
-  }, []);
+        const iterationName =
+          iteration.plainText.match(/(?<name>I\d\.\d)/i)?.groups.name ?? "";
+        const stickerText = sticker.plainText ?? "Unknown text";
+
+        const displayColor = feature.style?.backgroundColor ?? "#808080";
+
+        const name = `${iterationName} ${stickerText.replace(
+          /(\d+pt)/,
+          "",
+        )}`.trim();
+
+        const unifiedParent =
+          feature.plainText.match(/(?<feat>F\d+)/i)?.groups.feat ?? "";
+
+        const planEstimate =
+          sticker.plainText.match(/(?<points>\d+)pt/)?.groups.points ?? "";
+
+        const row = [displayColor, name, unifiedParent, planEstimate];
+
+        rows.push(row);
+      }
+    }
+  }
 
   console.debug("rows", rows);
   const csvData = `data:text/csv;charset=utf-8,${[headers, ...rows]
