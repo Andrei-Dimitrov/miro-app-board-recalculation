@@ -239,6 +239,7 @@ export const handleValidate = async () => {
   const { stickers, iterations, features } = await getBoardData();
 
   const iterationStats = {};
+  console.debug("iterations", iterations);
   // count iteration loads
   const isIterationsValid = iterations.every((iteration) => {
     const stickersWithin = stickers.filter(
