@@ -15,7 +15,9 @@ miro.onReady(async () => {
     // let the sidebar now what frame was previously selected
     const queryParams = frameId ? `?frameId=${frameId}` : "";
 
-    await miro.board.ui.openLeftSidebar(`${path}/sidebar.html${queryParams}`);
+    await miro.board.ui.openLeftSidebar(`${path}/sidebar.html${queryParams}`, {
+      width: "280px",
+    });
   };
 
   await miro.initialize({
