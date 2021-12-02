@@ -251,7 +251,7 @@ export const handleValidate = async () => {
     const iterationName =
       iteration.text.match(/(?<name>I\d\.\d)/i)?.groups.name;
 
-    console.debug("iterationName", iterationName);
+    console.debug("iterationName", iterationName, iteration.plainText);
 
     const iterationVelocity = Number(
       iteration.text.match(/vel: (?<count>\d+)/i)?.groups.count ?? 0,
