@@ -101,7 +101,7 @@ select {
 }
 
 #board-stats {
-    margin-bottom: 8px;
+    margin: 8px 0;
 }
 
 #board-stats td {
