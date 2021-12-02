@@ -95,63 +95,46 @@ export const updateStatus = async (newStatus) => {
   statusMessage.textContent = boardStatusMessages[newStatus];
 };
 
-export const createBoardStats = async () => {
-  const { iterations } = await getBoardData();
-
-  const boardStats = document.getElementById("board-stats");
-
+export const createBoardStats = async (iterationStats = {}) => {
   if (!window.frame) {
     return;
   }
 
-  if (boardStats.classList.contains("hidden")) {
-    boardStats.classList.remove("hidden");
+  const boardStatsElement = document.getElementById("board-stats");
+
+  if (boardStatsElement.classList.contains("hidden")) {
+    boardStatsElement.classList.remove("hidden");
   }
 
-  const iterationTable = document.getElementById("iteration-table");
+  const iterationTableElement = document.getElementById("iteration-table");
 
-  iterationTable.innerHTML = "";
+  iterationTableElement.innerHTML = "";
 
-  iterations.forEach((iteration) => {
-    const iterationName =
-      iteration.text.match(/(?<name>I\d\.\d)/i)?.groups.name;
+  Object.entries(iterationStats).forEach(([iterationName, iteration]) => {
+    const rowElement = document.createElement("tr");
 
-    if (!iterationName) {
-      return;
+    const nameElement = document.createElement("td");
+    nameElement.textContent = iterationName;
+
+    const velocityElement = document.createElement("td");
+    velocityElement.textContent = iteration.velocity.toString();
+
+    const loadElement = document.createElement("td");
+    loadElement.textContent = iteration.load.toString();
+
+    const diffElement = document.createElement("td");
+    diffElement.textContent = iteration.diff.toString();
+
+    if (iteration.load > iteration.velocity) {
+      rowElement.style.color = "#f00";
     }
 
-    const iterationVelocity = Number(
-      iteration.text.match(/vel: (?<count>\d+)/i)?.groups.count ?? 0,
-    );
-    const iterationLoad = Number(
-      iteration.text.match(/ld: (?<count>\d+)/i)?.groups.count ?? 0,
-    );
-    const iterationDiff = Math.abs(iterationVelocity - iterationLoad);
+    rowElement.appendChild(nameElement);
+    rowElement.appendChild(velocityElement);
+    rowElement.appendChild(loadElement);
+    rowElement.appendChild(diffElement);
 
-    const row = document.createElement("tr");
-
-    const name = document.createElement("td");
-    name.textContent = iterationName;
-
-    const velocity = document.createElement("td");
-    velocity.textContent = iterationVelocity.toString();
-
-    const load = document.createElement("td");
-    load.textContent = iterationLoad.toString();
-
-    const diff = document.createElement("td");
-    diff.textContent = iterationDiff.toString();
-
-    if (iterationLoad > iterationVelocity) {
-      row.style.color = "#f00";
-    }
-
-    row.appendChild(name);
-    row.appendChild(velocity);
-    row.appendChild(load);
-    row.appendChild(diff);
-
-    iterationTable.appendChild(row);
+    iterationTableElement.appendChild(rowElement);
   });
 };
 
@@ -246,7 +229,6 @@ export const handleRecalculate = async () => {
   );
 
   await updateStatus("ok");
-  await createBoardStats();
 };
 
 export const handleValidate = async () => {
@@ -256,19 +238,40 @@ export const handleValidate = async () => {
 
   const { stickers, iterations, features } = await getBoardData();
 
+  const iterationStats = {};
   // count iteration loads
   const isIterationsValid = iterations.every((iteration) => {
     const stickersWithin = stickers.filter(
       (item) => item !== iteration && isRoughlyWithinColumn(item, iteration),
     );
 
-    const count = countStickersPoints(stickersWithin);
+    const actualLoad = countStickersPoints(stickersWithin);
 
-    const iterationCount = Number(
+    const iterationName =
+      iteration.text.match(/(?<name>I\d\.\d)/i)?.groups.name;
+
+    if (!iterationName) {
+      return;
+    }
+
+    const iterationVelocity = Number(
+      iteration.text.match(/vel: (?<count>\d+)/i)?.groups.count ?? 0,
+    );
+    const iterationLoad = Number(
       iteration.text.match(/ld: (?<count>\d+)/i)?.groups.count ?? 0,
     );
 
-    return count === iterationCount;
+    const iterationDiff = Math.abs(iterationVelocity - iterationLoad);
+
+    if (iterationName) {
+      iterationStats[iterationName] = {
+        velocity: iterationVelocity,
+        load: iterationLoad,
+        diff: iterationDiff,
+      };
+    }
+
+    return actualLoad === iterationLoad;
   });
 
   // count feature sizes
@@ -291,4 +294,6 @@ export const handleValidate = async () => {
   } else {
     await updateStatus("fail");
   }
+
+  await createBoardStats(iterationStats);
 };
