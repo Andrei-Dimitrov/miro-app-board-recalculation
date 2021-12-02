@@ -241,7 +241,7 @@ export const handleValidate = async () => {
   const iterationStats = {};
   console.debug("iterations", iterations);
   // count iteration loads
-  const isIterationsValid = iterations.every((iteration) => {
+  const isIterationsValid = iterations.reduce((acc, iteration) => {
     const stickersWithin = stickers.filter(
       (item) => item !== iteration && isRoughlyWithinColumn(item, iteration),
     );
@@ -270,8 +270,8 @@ export const handleValidate = async () => {
       };
     }
 
-    return actualLoad === iterationLoad;
-  });
+    return acc && actualLoad === iterationLoad;
+  }, true);
 
   // count feature sizes
   const isFeaturesValid = features.every((feature) => {
