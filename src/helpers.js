@@ -239,7 +239,6 @@ export const handleValidate = async () => {
   const { stickers, iterations, features } = await getBoardData();
 
   const iterationStats = {};
-  console.debug("iterations", iterations);
   // count iteration loads
   const isIterationsValid = iterations.reduce((acc, iteration) => {
     const stickersWithin = stickers.filter(
@@ -250,8 +249,6 @@ export const handleValidate = async () => {
 
     const iterationName =
       iteration.text.match(/(?<name>I\d\.\d)/i)?.groups.name;
-
-    console.debug("iterationName", iterationName, iteration.plainText);
 
     const iterationVelocity = Number(
       iteration.text.match(/vel: (?<count>\d+)/i)?.groups.count ?? 0,
