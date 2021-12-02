@@ -79,7 +79,11 @@ select {
     display: none;
 }
 
-td {
+#board-stats {
+    margin-top: 8px;
+}
+
+#board-stats td {
     text-align: center;
     padding: 0.5rem;
 }
