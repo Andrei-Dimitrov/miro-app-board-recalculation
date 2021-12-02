@@ -265,7 +265,7 @@ export const handleValidate = async () => {
     if (iterationName) {
       iterationStats[iterationName] = {
         velocity: iterationVelocity,
-        load: iterationLoad,
+        load: actualLoad,
         diff: iterationDiff,
       };
     }
