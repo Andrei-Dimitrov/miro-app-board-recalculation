@@ -348,9 +348,9 @@ export const createAndDownloadCSV = async () => {
   }
 
   console.debug("rows", rows);
-  const csvData = `data:text/csv;charset=utf-8,${[headers, ...rows]
-    .map((row) => row.join(","))
-    .join("\n")}`;
+  const csvData = `data:text/csv;base64,${btoa(
+    [headers, ...rows].map((row) => row.join(",")).join("\n"),
+  )}`;
 
   console.debug("csvData", csvData);
   const encodedUri = encodeURI(csvData);
