@@ -352,6 +352,7 @@ export const createAndDownloadCSV = async () => {
     .map((row) => row.join(","))
     .join("\n")}`;
 
+  console.debug("csvData", csvData);
   const encodedUri = encodeURI(csvData);
 
   const linkElement = document.createElement("a");
