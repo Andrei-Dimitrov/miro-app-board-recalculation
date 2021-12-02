@@ -80,7 +80,7 @@ select {
 }
 
 #board-stats {
-    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
 #board-stats td {
