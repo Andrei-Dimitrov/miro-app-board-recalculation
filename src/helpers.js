@@ -303,7 +303,7 @@ export const createAndDownloadCSV = async () => {
     return;
   }
 
-  const headers = ["DisplayColor", "Name", "UnifiedParent", "PlanEstimate"];
+  const headers = ["Display Color", "Name", "Unified Parent", "Plan Estimate"];
 
   const { stickers, iterations, features } = await getBoardData();
 
