@@ -354,6 +354,7 @@ export const createAndDownloadCSV = async () => {
 
   console.debug("csvData", csvData);
   const encodedUri = encodeURI(csvData);
+  console.debug("uri", encodedUri);
 
   const linkElement = document.createElement("a");
   linkElement.setAttribute("href", encodedUri);
