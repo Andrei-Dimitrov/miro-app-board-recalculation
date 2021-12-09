@@ -110,32 +110,34 @@ export const createBoardStats = async (iterationStats = {}) => {
 
   iterationTableElement.innerHTML = "";
 
-  Object.entries(iterationStats).forEach(([iterationName, iteration]) => {
-    const rowElement = document.createElement("tr");
+  Object.entries(iterationStats)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .forEach(([iterationName, iteration]) => {
+      const rowElement = document.createElement("tr");
 
-    const nameElement = document.createElement("td");
-    nameElement.textContent = iterationName;
+      const nameElement = document.createElement("td");
+      nameElement.textContent = iterationName;
 
-    const velocityElement = document.createElement("td");
-    velocityElement.textContent = iteration.velocity.toString();
+      const velocityElement = document.createElement("td");
+      velocityElement.textContent = iteration.velocity.toString();
 
-    const loadElement = document.createElement("td");
-    loadElement.textContent = iteration.load.toString();
+      const loadElement = document.createElement("td");
+      loadElement.textContent = iteration.load.toString();
 
-    const diffElement = document.createElement("td");
-    diffElement.textContent = iteration.diff.toString();
+      const diffElement = document.createElement("td");
+      diffElement.textContent = iteration.diff.toString();
 
-    if (iteration.load > iteration.velocity) {
-      rowElement.style.color = "#f00";
-    }
+      if (iteration.load > iteration.velocity) {
+        rowElement.style.color = "#f00";
+      }
 
-    rowElement.appendChild(nameElement);
-    rowElement.appendChild(velocityElement);
-    rowElement.appendChild(loadElement);
-    rowElement.appendChild(diffElement);
+      rowElement.appendChild(nameElement);
+      rowElement.appendChild(velocityElement);
+      rowElement.appendChild(loadElement);
+      rowElement.appendChild(diffElement);
 
-    iterationTableElement.appendChild(rowElement);
-  });
+      iterationTableElement.appendChild(rowElement);
+    });
 };
 
 export const createBoardFrameSelectOptions = async () => {
@@ -340,6 +342,10 @@ export const createAndDownloadCSV = async () => {
         const planEstimate =
           sticker.plainText.match(/(?<points>\d+)pt/)?.groups.points ?? "";
 
+        if (!planEstimate || !unifiedParent) {
+          continue;
+        }
+
         const row = [displayColor, name, unifiedParent, planEstimate];
 
         rows.push(row);
@@ -347,14 +353,11 @@ export const createAndDownloadCSV = async () => {
     }
   }
 
-  console.debug("rows", rows);
   const csvData = `data:text/csv;base64,${btoa(
     [headers, ...rows].map((row) => row.join(",")).join("\n"),
   )}`;
 
-  console.debug("csvData", csvData);
   const encodedUri = encodeURI(csvData);
-  console.debug("uri", encodedUri);
 
   const linkElement = document.createElement("a");
   linkElement.setAttribute("href", encodedUri);
@@ -364,4 +367,7 @@ export const createAndDownloadCSV = async () => {
   );
 
   linkElement.click();
+
+  const exportWarning = document.getElementById("export-warning");
+  exportWarning.classList.remove("hidden");
 };

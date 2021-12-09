@@ -112,3 +112,17 @@ select {
 #board-actions {
     display: flex;
 }
+
+#export-warning {
+    word-break: break-word;
+    margin-top: 1rem;
+    border-radius: 4px;
+    background-color: #fef1d8;
+    padding: 1rem;
+    display: flex;
+    align-items: flex-start;
+}
+
+#export-warning svg {
+    margin-right: 0.5rem;
+}
