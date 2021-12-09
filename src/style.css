@@ -97,7 +97,7 @@ select {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 #board-stats {
