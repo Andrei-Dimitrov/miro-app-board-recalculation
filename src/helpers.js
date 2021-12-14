@@ -208,7 +208,7 @@ export const handleRecalculate = async () => {
       );
 
       iteration.text = iteration.text.replace(/(ld: \d+)/i, `LD: ${load}`);
-
+      console.debug("load, velocity", load, velocity);
       if (load > velocity) {
         iteration.style.textColor = "#f00";
       } else {
