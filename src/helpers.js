@@ -208,14 +208,17 @@ export const handleRecalculate = async () => {
       );
 
       iteration.text = iteration.text.replace(/(ld: \d+)/i, `LD: ${load}`);
-      console.debug("load, velocity", load, velocity);
       if (load > velocity) {
-        iteration.style.textColor = "#f00";
+        iteration.style.textColor = "#ff0000";
       } else {
-        iteration.style.textColor = "#fff";
+        iteration.style.textColor = "#ffffff";
       }
 
-      await miro.board.widgets.update(iteration);
+      await miro.board.widgets.update({
+        id: iteration.id,
+        text: iteration.text,
+        style: iteration.style,
+      });
     }),
   );
 
@@ -230,7 +233,10 @@ export const handleRecalculate = async () => {
 
       feature.text = feature.text.replace(/(size: \d+)/i, `Size: ${count}`);
 
-      await miro.board.widgets.update(feature);
+      await miro.board.widgets.update({
+        id: feature.id,
+        text: feature.text,
+      });
     }),
   );
 
