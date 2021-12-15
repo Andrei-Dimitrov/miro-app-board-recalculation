@@ -1,17 +1,25 @@
-import { boardStatusIcons, boardStatusMessages } from "./constants.js";
+import { boardStatusIcons, boardStatusMessages } from "./constants";
+import type { IFrameWidget, IStickerWidget, IWidget } from "./interfaces";
+import {
+  getFrameWidget,
+  getFrameWidgets,
+  getShapeWidgets,
+  getStickerWidgets,
+  updateWidgets,
+} from "./miroHelpers";
 
-export const isWithinColumn = (item, parent) =>
+export const isWithinColumn = (item: IWidget, parent: IWidget) =>
   item.bounds.left >= parent.bounds.left &&
   item.bounds.right <= parent.bounds.right;
 
-export const isWithinRow = (item, parent) =>
+export const isWithinRow = (item: IWidget, parent: IWidget) =>
   item.bounds.top >= parent.bounds.top &&
   item.bounds.bottom <= parent.bounds.bottom;
 
-export const isWithinCell = (item, parent) =>
+export const isWithinCell = (item: IWidget, parent: IWidget) =>
   isWithinColumn(item, parent) && isWithinRow(item, parent);
 
-export const isRoughlyWithinColumn = (item, parent) => {
+export const isRoughlyWithinColumn = (item: IWidget, parent: IWidget) => {
   if (isWithinColumn(item, parent)) {
     return true;
   }
@@ -41,7 +49,7 @@ export const isRoughlyWithinColumn = (item, parent) => {
   return false;
 };
 
-export const isRoughlyWithinRow = (item, parent) => {
+export const isRoughlyWithinRow = (item: IWidget, parent: IWidget) => {
   if (isWithinRow(item, parent)) {
     return true;
   }
@@ -69,44 +77,61 @@ export const isRoughlyWithinRow = (item, parent) => {
   return false;
 };
 
-export const parseQuery = (query) =>
+export const parseQuery = (query: string) =>
   query
     .slice(1)
     .split("&")
     .reduce((acc, param) => {
       const [key, value] = param.split("=");
       return { ...acc, [key]: decodeURIComponent(value) };
-    }, {});
+    }, {} as { frameId?: string });
 
-export const countStickersPoints = (stickers) =>
+export const countStickersPoints = (stickers: IStickerWidget[]) =>
   stickers.reduce((acc, sticker) => {
     const points = Number(
-      sticker.plainText.match(/(?<points>\d+)pt/)?.groups.points ?? 0,
+      sticker.plainText.match(/(?<points>\d+)pt/)?.groups?.points ?? 0,
     );
 
     return acc + points;
   }, 0);
 
-export const updateStatus = async (newStatus) => {
-  const statusIcon = document.getElementById("board-status-icon");
+export const updateStatus = async (
+  newStatus: keyof typeof boardStatusIcons,
+) => {
+  const statusIcon = document.getElementById(
+    "board-status-icon",
+  ) as HTMLImageElement | null;
   const statusMessage = document.getElementById("board-status-message");
+
+  if (!statusIcon || !statusMessage) {
+    return;
+  }
 
   statusIcon.src = boardStatusIcons[newStatus];
   statusMessage.textContent = boardStatusMessages[newStatus];
 };
 
-export const createBoardStats = async (iterationStats = {}) => {
-  if (!window.frame) {
-    return;
-  }
+export interface IterationData {
+  name: string,
+  velocity: number;
+  load: number;
+  diff: number;
+}
 
+export const createBoardStats = (
+  iterationStats: Record<string, IterationData> = {},
+) => {
   const boardStatsElement = document.getElementById("board-stats");
 
-  if (boardStatsElement.classList.contains("hidden")) {
+  if (boardStatsElement?.classList.contains("hidden")) {
     boardStatsElement.classList.remove("hidden");
   }
 
   const iterationTableElement = document.getElementById("iteration-table");
+
+  if (!iterationTableElement) {
+    return;
+  }
 
   iterationTableElement.innerHTML = "";
 
@@ -141,18 +166,32 @@ export const createBoardStats = async (iterationStats = {}) => {
 };
 
 export const createBoardFrameSelectOptions = async () => {
-  const select = document.getElementById("frame-select");
-  const frames = await miro.board.widgets.get({ type: "frame" });
+  const select = document.getElementById(
+    "frame-select",
+  ) as HTMLSelectElement | null;
+  const frames = await getFrameWidgets();
+
+  if (!select) {
+    return;
+  }
 
   frames.forEach((frame) => {
     select.options[select.options.length] = new Option(frame.title, frame.id);
   });
 
   select.addEventListener("change", async (ev) => {
-    const frameId = ev.target.value;
-    window.frame = (await miro.board.widgets.get({ id: frameId }))[0];
-    const recalculateButton = document.getElementById("recalculate-button");
-    const exportButton = document.getElementById("export-button");
+    const frameId = (ev.target as HTMLSelectElement).value;
+    window.frame = await getFrameWidget(frameId);
+    const recalculateButton = document.getElementById(
+      "recalculate-button",
+    ) as HTMLButtonElement;
+    const exportButton = document.getElementById(
+      "export-button",
+    ) as HTMLButtonElement;
+
+    if (!recalculateButton || !exportButton) {
+      return;
+    }
 
     if (recalculateButton.disabled) {
       recalculateButton.disabled = false;
@@ -167,17 +206,19 @@ export const createBoardFrameSelectOptions = async () => {
   });
 };
 
-export const getBoardData = async () => {
-  const stickers = (await miro.board.widgets.get({ type: "sticker" })).filter(
-    (item) => isWithinCell(item, window.frame),
-  );
+export const getBoardData = async (frame: IFrameWidget) => {
+  const allStickers = await getStickerWidgets();
 
-  const iterations = (await miro.board.widgets.get({ type: "shape" }))
-    .filter((item) => isWithinCell(item, window.frame))
+  const stickers = allStickers.filter((item) => isWithinCell(item, frame));
+
+  const allShapes = await getShapeWidgets();
+
+  const iterations = allShapes
+    .filter((item) => isWithinCell(item, frame))
     .filter((shape) => /vel: \d+\s+ld: \d+/i.test(shape.plainText));
 
-  const features = (await miro.board.widgets.get({ type: "shape" }))
-    .filter((item) => isWithinCell(item, window.frame))
+  const features = allShapes
+    .filter((item) => isWithinCell(item, frame))
     .filter((shape) => /size: \d+/i.test(shape.plainText));
 
   return {
@@ -198,13 +239,14 @@ export const handleRecalculate = async () => {
   await Promise.all(
     iterations.map(async (iteration) => {
       const stickersWithin = stickers.filter(
-        (item) => item !== iteration && isRoughlyWithinColumn(item, iteration),
+        (item) =>
+          item.id !== iteration.id && isRoughlyWithinColumn(item, iteration),
       );
 
       const load = countStickersPoints(stickersWithin);
 
       const velocity = Number(
-        iteration.text.match(/vel: (?<vel>\d+)/i)?.groups.vel ?? 0,
+        iteration.text.match(/vel: (?<vel>\d+)/i)?.groups?.vel ?? 0,
       );
 
       iteration.text = iteration.text.replace(/(ld: \d+)/i, `LD: ${load}`);
@@ -214,7 +256,7 @@ export const handleRecalculate = async () => {
         iteration.style.textColor = "#ffffff";
       }
 
-      await miro.board.widgets.update({
+      await updateWidgets({
         id: iteration.id,
         text: iteration.text,
         style: iteration.style,
@@ -226,14 +268,14 @@ export const handleRecalculate = async () => {
   await Promise.all(
     features.map(async (feature) => {
       const stickersWithin = stickers.filter(
-        (item) => item !== feature && isRoughlyWithinRow(item, feature),
+        (item) => item.id !== feature.id && isRoughlyWithinRow(item, feature),
       );
 
       const count = countStickersPoints(stickersWithin);
 
       feature.text = feature.text.replace(/(size: \d+)/i, `Size: ${count}`);
 
-      await miro.board.widgets.update({
+      await updateWidgets({
         id: feature.id,
         text: feature.text,
       });
@@ -250,23 +292,24 @@ export const handleValidate = async () => {
 
   const { stickers, iterations, features } = await getBoardData();
 
-  const iterationStats = {};
+  const iterationStats: Record<string, IterationData> = {};
   // count iteration loads
   const isIterationsValid = iterations.reduce((acc, iteration) => {
     const stickersWithin = stickers.filter(
-      (item) => item !== iteration && isRoughlyWithinColumn(item, iteration),
+      (item) =>
+        item.id !== iteration.id && isRoughlyWithinColumn(item, iteration),
     );
 
     const actualLoad = countStickersPoints(stickersWithin);
 
     const iterationName =
-      iteration.text.match(/(?<name>I\d\.\d)/i)?.groups.name;
+      iteration.text.match(/(?<name>I\d\.\d)/i)?.groups?.name;
 
     const iterationVelocity = Number(
-      iteration.text.match(/vel: (?<count>\d+)/i)?.groups.count ?? 0,
+      iteration.text.match(/vel: (?<count>\d+)/i)?.groups?.count ?? 0,
     );
     const iterationLoad = Number(
-      iteration.text.match(/ld: (?<count>\d+)/i)?.groups.count ?? 0,
+      iteration.text.match(/ld: (?<count>\d+)/i)?.groups?.count ?? 0,
     );
 
     const iterationDiff = Math.abs(iterationVelocity - actualLoad);
@@ -285,13 +328,13 @@ export const handleValidate = async () => {
   // count feature sizes
   const isFeaturesValid = features.every((feature) => {
     const stickersWithin = stickers.filter(
-      (item) => item !== feature && isRoughlyWithinRow(item, feature),
+      (item) => item.id !== feature.id && isRoughlyWithinRow(item, feature),
     );
 
     const count = countStickersPoints(stickersWithin);
 
     const featureCount = Number(
-      feature.text.match(/size: (?<count>\d+)/i)?.groups.count ?? 0,
+      feature.text.match(/size: (?<count>\d+)/i)?.groups?.count ?? 0,
     );
 
     return count === featureCount;
@@ -320,7 +363,7 @@ export const createAndDownloadCSV = async () => {
   // really complicated nested loop, sorry :(
   for (const feature of features) {
     const featureStickers = stickers.filter(
-      (item) => item !== feature && isRoughlyWithinRow(item, feature),
+      (item) => item.id !== feature.id && isRoughlyWithinRow(item, feature),
     );
 
     for (const sticker of featureStickers) {
@@ -332,7 +375,7 @@ export const createAndDownloadCSV = async () => {
         }
 
         const iterationName =
-          iteration.plainText.match(/(?<name>I\d\.\d)/i)?.groups.name ?? "";
+          iteration.plainText.match(/(?<name>I\d\.\d)/i)?.groups?.name ?? "";
         const stickerText = sticker.plainText ?? "Unknown text";
 
         const displayColor = feature.style?.backgroundColor ?? "#808080";
@@ -343,10 +386,10 @@ export const createAndDownloadCSV = async () => {
         )}`.trim();
 
         const unifiedParent =
-          feature.plainText.match(/(?<feat>F\d+)/i)?.groups.feat ?? "";
+          feature.plainText.match(/(?<feat>F\d+)/i)?.groups?.feat ?? "";
 
         const planEstimate =
-          sticker.plainText.match(/(?<points>\d+)pt/)?.groups.points ?? "";
+          sticker.plainText.match(/(?<points>\d+)pt/)?.groups?.points ?? "";
 
         if (!planEstimate || !unifiedParent) {
           continue;
@@ -375,5 +418,5 @@ export const createAndDownloadCSV = async () => {
   linkElement.click();
 
   const exportWarning = document.getElementById("export-warning");
-  exportWarning.classList.remove("hidden");
+  exportWarning?.classList.remove("hidden");
 };

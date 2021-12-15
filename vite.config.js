@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
 const { defineConfig } = require("vite");
 const mkcert = require("vite-plugin-mkcert").default;
+const reactRefresh = require("@vitejs/plugin-react-refresh");
+const reactSvgPlugin = require("vite-plugin-react-svg");
 
 module.exports = defineConfig({
   build: {
@@ -14,5 +17,9 @@ module.exports = defineConfig({
   server: {
     https: true,
   },
-  plugins: [mkcert()],
+  plugins: [
+    process.env.NODE_ENV === "development" && reactRefresh(),
+    mkcert(),
+    reactSvgPlugin(),
+  ].filter(Boolean),
 });

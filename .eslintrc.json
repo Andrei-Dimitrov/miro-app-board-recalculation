@@ -1,29 +1,68 @@
 {
-  "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": 2021
-  },
-  "extends": ["eslint:recommended", "prettier"],
-  "rules": {
-    "no-unused-vars": ["error", { "ignoreRestSiblings": true }],
-    "prettier/prettier": [
-      "error",
-      {
-        "arrowParens": "always",
-        "trailingComma": "all"
+  "parser": "@typescript-eslint/parser",
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
       }
-    ],
+    }
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:import/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "plugin:css-import-order/recommended"
+  ],
+  "env": {
+    "jest": true,
+    "node": true,
+    "browser": true,
+    "es6": true
+  },
+  "rules": {
+    "linebreak-style": ["error", "unix"],
+    "import/prefer-default-export": "off",
+    "prettier/prettier": ["error", {
+      "arrowParens": "always",
+      "trailingComma": "all"
+    }],
     "arrow-parens": ["error", "always"],
     "comma-dangle": ["error", "always-multiline"],
-    "no-console": ["error", { "allow": ["warn", "error", "info"] }]
+    "space-before-function-paren": ["error", {"anonymous": "always", "named": "never", "asyncArrow": "always"}],
+    "import/no-anonymous-default-export": "off",
+    "no-console": ["error", { "allow": ["warn", "error", "info"]}],
+    "import/order": "error",
+    "react/prop-types": "off",
+    // replace with TS analogue
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error", { "ignoreRestSiblings": true }],
+    "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "type-imports"}],
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "import/no-unresolved": [
+      "error",
+      {
+        "ignore": [".svg"]
+      }
+    ]
   },
-  "env": {
-    "es6": true,
-    "browser": true,
-    "node": true
-  },
-  "globals": {
-    "miro": true
-  },
-  "plugins": ["prettier"]
+  "plugins": [
+    "react",
+    "react-hooks",
+    "import",
+    "prettier",
+    "@typescript-eslint",
+    "css-import-order"
+  ]
 }

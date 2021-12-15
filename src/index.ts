@@ -1,7 +1,8 @@
-import { libraryIcon, toolbarIcon } from "./constants.js";
+import toolbarIcon from "/static/toolbarIcon.svg?url";
+import libraryIcon from "/static/libraryIcon.svg?url";
 
 miro.onReady(async () => {
-  let frameId;
+  let frameId: string;
   const path = window.location.pathname.replace("/index.html", "");
 
   const init = async () => {
@@ -15,9 +16,7 @@ miro.onReady(async () => {
     // let the sidebar now what frame was previously selected
     const queryParams = frameId ? `?frameId=${frameId}` : "";
 
-    await miro.board.ui.openLeftSidebar(`${path}/sidebar.html${queryParams}`, {
-      width: "280px",
-    });
+    await miro.board.ui.openLeftSidebar(`${path}/sidebar.html${queryParams}`);
   };
 
   await miro.initialize({
@@ -46,3 +45,5 @@ miro.onReady(async () => {
     }
   });
 });
+
+export {};
