@@ -9,7 +9,7 @@ import { Button } from "../../components/Button";
 import type { IterationData } from "../../interfaces";
 import { BoardStatuses } from "../../components/BoardStatus/constants";
 import { getFrameWidgets } from "../../miroHelpers";
-import { handleValidate } from "./helpers";
+import { handleRecalculate, handleValidate } from "./helpers";
 
 import classes from "./LadningPage.module.css";
 
@@ -73,7 +73,12 @@ export const LandingPage = () => {
             <BoardStats data={boardStats} />
             <div className={classes.actionButtons}>
               <Button onClick={() => navigate("/export")}>Export to CSV</Button>
-              <Button variant="success">Recalculate board</Button>
+              <Button
+                onClick={() => handleRecalculate(frameId, { setStatus })}
+                variant="success"
+              >
+                Recalculate board
+              </Button>
             </div>
           </>
         )}
