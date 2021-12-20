@@ -1,8 +1,10 @@
 import type { HTMLAttributes } from "react";
-import cn from "classnames";
+
+import classes from "./Button.module.css";
 
 export enum ButtonVariants {
   Success = "success",
+  Default = "default",
 }
 
 export interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
@@ -12,12 +14,13 @@ export interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = (props: ButtonProps) => {
-  const { className, variant, isLoading, isDisabled, ...restProps } = props;
+  const {
+    className,
+    variant = ButtonVariants.Default,
+    isLoading,
+    isDisabled,
+    ...restProps
+  } = props;
 
-  return (
-    <button
-      className={cn(className, variant === ButtonVariants.Success && "success")}
-      {...restProps}
-    />
-  );
+  return <button className={classes[variant]} {...restProps} />;
 };

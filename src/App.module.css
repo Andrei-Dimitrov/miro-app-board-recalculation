@@ -3,14 +3,9 @@
     src: url('https://miro.com/app/static/static/fonts/general/FormularRegular/formular-regular.4b9930.woff2');
 }
 
-:global(
-    body,
-    button,
-    input,
-    textarea,
-    select
-) {
+:global :is(body, button, select, textarea, input) {
     font: 14px OpenSans, Arial, Helvetica, sans-serif;
+    color: #595959;
     font-style: normal;
     font-variant-ligatures: normal;
     font-variant-caps: normal;
@@ -20,6 +15,11 @@
     font-stretch: normal;
     line-height: normal;
     font-family: OpenSans, Arial, Helvetica, sans-serif;
+}
+
+:global body {
+    /* matches the miro sidebar width */
+    width: 340px;
 }
 
 .container {

@@ -1,0 +1,15 @@
+.wrapper {
+    margin-bottom: 24px;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.icon {
+    margin-right: 16px;
+    width: 32px;
+    height: 32px;
+}

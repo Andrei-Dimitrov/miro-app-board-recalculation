@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
 const { defineConfig } = require("vite");
-const mkcert = require("vite-plugin-mkcert").default;
+// const mkcert = require("vite-plugin-mkcert").default;
 const reactRefresh = require("@vitejs/plugin-react-refresh");
 const reactSvgPlugin = require("vite-plugin-react-svg");
 
 module.exports = defineConfig({
+  esbuild: {
+    jsxInject: `import React from 'react'`,
+  },
   build: {
     rollupOptions: {
       input: {
@@ -15,11 +18,11 @@ module.exports = defineConfig({
     },
   },
   server: {
-    https: true,
+    // https: true,
   },
   plugins: [
     process.env.NODE_ENV === "development" && reactRefresh(),
-    mkcert(),
+    // mkcert(),
     reactSvgPlugin(),
   ].filter(Boolean),
 });

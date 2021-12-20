@@ -1,4 +1,7 @@
-import { BoardStatuses } from "../../constants";
+import type { BoardStatuses } from "./constants";
+import { boardStatusIcons, boardStatusMessages } from "./constants";
+
+import classes from "./BoardStatus.module.css";
 
 export interface BoardStatusProps {
   status: BoardStatuses;
@@ -8,41 +11,15 @@ export const BoardStatus = (props: BoardStatusProps) => {
   const { status } = props;
 
   return (
-    <div>
+    <div className={classes.wrapper}>
       <strong>Board status:</strong>
-      <div className="board-status-container">
-        {status === BoardStatuses.Ok && (
-          <>
-            <img
-              src="https://www.svgrepo.com/show/146075/question.svg"
-              alt="Board status"
-              id="board-status-icon"
-            />
-            <span id="board-status-message">Up to date.</span>
-          </>
-        )}
-        {status === BoardStatuses.Fail && (
-          <>
-            <img
-              src="https://www.svgrepo.com/show/146075/question.svg"
-              alt="Board status"
-              id="board-status-icon"
-            />
-            <span id="board-status-message">Outdated</span>
-          </>
-        )}
-        {status === BoardStatuses.Unknown && (
-          <>
-            <img
-              src="https://www.svgrepo.com/show/146075/question.svg"
-              alt="Board status"
-              id="board-status-icon"
-            />
-            <span id="board-status-message">
-              Unknown. Recalculate to update!
-            </span>
-          </>
-        )}
+      <div className={classes.container}>
+        <img
+          src={boardStatusIcons[status]}
+          alt="Board status"
+          className={classes.icon}
+        />
+        <span>{boardStatusMessages[status]}</span>
       </div>
     </div>
   );

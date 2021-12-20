@@ -1,0 +1,38 @@
+:root {
+    --button-margin: 16px;
+    --button-padding: 12px 16px;
+}
+
+.base {
+    cursor: pointer;
+    margin-top: var(--button-margin);
+    padding: var(--button-padding);
+    border-radius: 4px;
+    border: 1px solid #313131;
+}
+
+.success {
+    composes: base;
+    background-color: #25AE88;
+    color: white;
+    border-color: #25AE88;
+}
+
+.success:hover {
+    background-color: #3fcea6;
+}
+
+.default {
+    composes: base;
+    background-color: #ffffff;
+    color: #313131;
+}
+
+.default:hover {
+    background-color: #efefef;
+}
+
+.base[disabled] {
+    background-color: #bebebe;
+    cursor: not-allowed;
+}

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router } from "react-router-dom";
+import { HashRouter as Router } from "react-router-dom";
 import { Route, Routes } from "react-router";
 import { LandingPage } from "./pages";
 
@@ -10,7 +10,7 @@ export const App = () => {
       <div className={classes.container}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          {/*<Route path="/rally-export" element={<RallyExportPage />} />*/}
+          <Route path="/export" element={<h1>Not implemented</h1>} />
         </Routes>
       </div>
     </Router>

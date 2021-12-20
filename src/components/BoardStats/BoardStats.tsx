@@ -1,5 +1,7 @@
 import cn from "classnames";
-import type { IterationData } from "../../helpers";
+import type { IterationData } from "../../interfaces";
+
+import classes from "./BoardStats.module.css";
 
 export interface BoardStatsProps {
   data: IterationData[];
@@ -15,18 +17,18 @@ export const BoardStats = (props: BoardStatsProps) => {
   const sortedData = data.sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div>
+    <div className={classes.wrapper}>
       <div>
         <strong>Real time board stats</strong>
       </div>
-      <span>Iterations:</span>
+      <div className={classes.label}>Iterations:</div>
       <table>
         <thead>
           <tr>
-            <td>Name</td>
-            <td>Velocity</td>
-            <td>Load</td>
-            <td>Diff</td>
+            <td className={classes.cell}>Name</td>
+            <td className={classes.cell}>Velocity</td>
+            <td className={classes.cell}>Load</td>
+            <td className={classes.cell}>Diff</td>
           </tr>
         </thead>
         <tbody>
@@ -38,10 +40,10 @@ export const BoardStats = (props: BoardStatsProps) => {
                 iteration.load > iteration.velocity && "invalid",
               )}
             >
-              <td>{iteration.name}</td>
-              <td>{iteration.velocity}</td>
-              <td>{iteration.load}</td>
-              <td>{iteration.diff}</td>
+              <td className={classes.cell}>{iteration.name}</td>
+              <td className={classes.cell}>{iteration.velocity}</td>
+              <td className={classes.cell}>{iteration.load}</td>
+              <td className={classes.cell}>{iteration.diff}</td>
             </tr>
           ))}
         </tbody>

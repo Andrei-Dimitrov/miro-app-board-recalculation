@@ -16,7 +16,8 @@ miro.onReady(async () => {
     // let the sidebar now what frame was previously selected
     const queryParams = frameId ? `?frameId=${frameId}` : "";
 
-    await miro.board.ui.openLeftSidebar(`${path}/sidebar.html${queryParams}`);
+    // # is required to support the hash router
+    await miro.board.ui.openLeftSidebar(`${path}/sidebar.html#/${queryParams}`);
   };
 
   await miro.initialize({

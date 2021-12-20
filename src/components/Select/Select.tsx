@@ -1,5 +1,7 @@
 import type { ChangeEventHandler, HTMLAttributes } from "react";
 
+import classes from "./Select.module.css";
+
 export interface Option {
   text: string;
   value: string;
@@ -24,8 +26,13 @@ export const Select = (props: SelectProps) => {
   } = props;
 
   return (
-    <select value={value} onChange={onChange} {...restProps}>
-      <option value="" disabled={!shouldAllowEmpty} selected>
+    <select
+      className={classes.wrapper}
+      value={value}
+      onChange={onChange}
+      {...restProps}
+    >
+      <option value="" disabled={!shouldAllowEmpty}>
         {placeholder}
       </option>
       {options.map(({ value, text }, index) => (

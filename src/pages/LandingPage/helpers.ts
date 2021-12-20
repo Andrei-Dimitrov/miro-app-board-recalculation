@@ -1,13 +1,6 @@
-import type { IterationData } from "../../helpers";
-import {
-  countStickersPoints,
-  getBoardData,
-  isRoughlyWithinColumn,
-  isRoughlyWithinRow,
-} from "../../helpers";
-import type { SetState } from "../../interfaces";
-import { BoardStatuses } from "../../constants";
-import { getFrameWidget } from "../../miroHelpers";
+import type { IterationData, SetState } from "../../interfaces";
+import { getBoardModel } from "../../helpers";
+import { BoardStatuses } from "../../components/BoardStatus/constants";
 
 export interface StateParam {
   setStatus: SetState<BoardStatuses>;
@@ -15,65 +8,28 @@ export interface StateParam {
 }
 
 export const handleValidate = async (frameId: string, state: StateParam) => {
-  if (!frameId) {
+  const model = await getBoardModel(frameId);
+
+  if (!model) {
     return;
   }
 
-  const frame = await getFrameWidget(frameId);
+  const { iterations, features } = model;
 
-  if (!frame) {
-    return;
-  }
+  const isIterationsValid = iterations.every((iteration) => {
+    const actualLoad = iteration
+      .getStickers()
+      .reduce((acc, sticker) => acc + sticker.points, 0);
 
-  const { stickers, iterations, features } = await getBoardData(frame);
+    return actualLoad === iteration.load;
+  });
 
-  const iterationStats: IterationData[] = [];
-  // count iteration loads
-  const isIterationsValid = iterations.reduce((acc, iteration) => {
-    const stickersWithin = stickers.filter(
-      (item) =>
-        item.id !== iteration.id && isRoughlyWithinColumn(item, iteration),
-    );
-
-    const actualLoad = countStickersPoints(stickersWithin);
-
-    const iterationName =
-      iteration.text.match(/(?<name>I\d\.\d)/i)?.groups?.name;
-
-    const iterationVelocity = Number(
-      iteration.text.match(/vel: (?<count>\d+)/i)?.groups?.count ?? 0,
-    );
-    const iterationLoad = Number(
-      iteration.text.match(/ld: (?<count>\d+)/i)?.groups?.count ?? 0,
-    );
-
-    const iterationDiff = Math.abs(iterationVelocity - actualLoad);
-
-    if (iterationName) {
-      iterationStats.push({
-        name: iterationName,
-        velocity: iterationVelocity,
-        load: actualLoad,
-        diff: iterationDiff,
-      });
-    }
-
-    return acc && actualLoad === iterationLoad;
-  }, true);
-
-  // count feature sizes
   const isFeaturesValid = features.every((feature) => {
-    const stickersWithin = stickers.filter(
-      (item) => item.id !== feature.id && isRoughlyWithinRow(item, feature),
-    );
+    const actualSize = feature
+      .getStickers()
+      .reduce((acc, sticker) => acc + sticker.points, 0);
 
-    const count = countStickersPoints(stickersWithin);
-
-    const featureCount = Number(
-      feature.text.match(/size: (?<count>\d+)/i)?.groups?.count ?? 0,
-    );
-
-    return count === featureCount;
+    return actualSize === feature.size;
   });
 
   if (isIterationsValid && isFeaturesValid) {
@@ -82,5 +38,18 @@ export const handleValidate = async (frameId: string, state: StateParam) => {
     state.setStatus(BoardStatuses.Fail);
   }
 
-  state.setBoardStats(iterationStats);
+  const stats = iterations.map(({ name, load, velocity, getStickers }) => {
+    const actualLoad = getStickers().reduce(
+      (acc, sticker) => acc + sticker.points,
+      0,
+    );
+    return {
+      name,
+      load: actualLoad,
+      velocity,
+      diff: Math.abs(load - velocity),
+    };
+  });
+
+  state.setBoardStats(stats);
 };
